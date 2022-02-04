@@ -1,3 +1,9 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "next/core-web-vitals",
+    "@kobakazu0429/eslint-config-typescript-react"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  }
 }
