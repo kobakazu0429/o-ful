@@ -1,3 +1,6 @@
+import type { VFC } from "react";
+import Link from "next/link";
+
 import {
   Box,
   Flex,
@@ -7,7 +10,7 @@ import {
   Stack,
   Collapse,
   Icon,
-  Link,
+  Link as ChakraLink,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -22,11 +25,11 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 
-export const Header = () => {
+export const Header: VFC = () => {
   // const { isOpen, onToggle } = useDisclosure();
 
   return (
-    <Box>
+    <Box as="header">
       <Flex
         bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
@@ -78,24 +81,11 @@ export const Header = () => {
           direction={"row"}
           spacing={6}
         >
-          <Button
-            as={"a"}
-            fontSize={"sm"}
-            fontWeight={400}
-            variant={"link"}
-            href={"#"}
-          >
-            ログイン
-          </Button>
-          <Button
-            as={"a"}
-            fontSize={"sm"}
-            fontWeight={400}
-            variant={"link"}
-            href={"#"}
-          >
-            会員登録
-          </Button>
+          <Link href="/login" passHref>
+            <Button as={"a"} fontSize={"sm"} fontWeight={400} variant={"link"}>
+              会員登録 / ログイン
+            </Button>
+          </Link>
           <Button
             display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
@@ -130,7 +120,7 @@ const DesktopNav = () => {
         <Box key={navItem.label}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
-              <Link
+              <ChakraLink
                 p={2}
                 href={navItem.href ?? "#"}
                 fontSize={"sm"}
@@ -142,7 +132,7 @@ const DesktopNav = () => {
                 }}
               >
                 {navItem.label}
-              </Link>
+              </ChakraLink>
             </PopoverTrigger>
 
             {navItem.children && (
@@ -170,7 +160,7 @@ const DesktopNav = () => {
 
 const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
   return (
-    <Link
+    <ChakraLink
       href={href}
       role={"group"}
       display={"block"}
@@ -201,7 +191,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
           <Icon color={"pink.400"} w={5} h={5} as={ChevronRightIcon} />
         </Flex>
       </Stack>
-    </Link>
+    </ChakraLink>
   );
 };
 
@@ -262,9 +252,9 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         >
           {children &&
             children.map((child) => (
-              <Link key={child.label} py={2} href={child.href}>
+              <ChakraLink key={child.label} py={2} href={child.href}>
                 {child.label}
-              </Link>
+              </ChakraLink>
             ))}
         </Stack>
       </Collapse>
