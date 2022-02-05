@@ -3,6 +3,7 @@ import { Header } from "../components/Header";
 import { BlockItem } from "../components/BlockItem";
 import { Hero } from "../components/Hero";
 import { Wrap, Heading } from "@chakra-ui/react";
+import { useCheckAlreadyLogin } from "../auth/user";
 
 const Home: NextPage<{
   data: {
@@ -19,6 +20,8 @@ const Home: NextPage<{
     likes: number;
   }[];
 }> = ({ data }) => {
+  useCheckAlreadyLogin();
+
   return (
     <>
       <Header />

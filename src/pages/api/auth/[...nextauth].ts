@@ -23,10 +23,19 @@ export default NextAuth({
   ],
   callbacks: {
     jwt: async ({ token, user }) => {
+      // console.log("[jwt]: ", { token, user });
+
       if (user) {
         token = user;
       }
       return token;
+    },
+    async session({ session, token }) {
+      // console.log("[session]: ", { session, token });
+
+      // @ts-expect-error
+      session.user.uid = token.uid;
+      return session;
     },
   },
 });

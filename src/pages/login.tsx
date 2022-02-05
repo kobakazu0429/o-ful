@@ -6,7 +6,6 @@ import {
   getAuth,
   signInWithRedirect,
   TwitterAuthProvider,
-  onAuthStateChanged,
   getRedirectResult,
 } from "firebase/auth";
 import type { AuthProvider } from "firebase/auth";
@@ -14,6 +13,7 @@ import { firebaseApp } from "../lib/firebase";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
 import { Heading, Text, Flex, Stack } from "@chakra-ui/react";
 import { useEffect } from "react";
+import { useCheckAlreadyLogin } from "../auth/user";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -24,13 +24,13 @@ const Login: NextPage = () => {
     signInWithRedirect(auth, provider).catch((error) => console.error(error));
   };
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user?.uid) {
-        router.push("/");
-      }
-    });
+  useCheckAlreadyLogin({
+    successHandle: () => {
+      router.push("/");
+    },
+  });
 
+  useEffect(() => {
     (async () => {
       const credential = await getRedirectResult(auth);
       if (!credential) return;
