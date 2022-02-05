@@ -21,18 +21,24 @@ const Home: NextPage<{
 }> = ({ data }) => {
   return (
     <>
-      <Header></Header>
-      <Hero></Hero>
+      <Header />
+      <Hero />
       <Heading size="lg" p={10}>
         最近追加されたもの
       </Heading>
+
       <Wrap
-        marginTop={0}
         marginX="auto"
-        spacing="30px"
-        align="center"
+        spacing={{
+          base: "10px",
+          md: "30px",
+        }}
         justify="center"
-        maxWidth="80%"
+        maxWidth={{
+          base: "90%",
+          md: "100%",
+          xl: "80%",
+        }}
       >
         {data.map((d) => (
           <BlockItem
