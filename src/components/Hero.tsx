@@ -9,7 +9,13 @@ const Testimonial: VFC<{
   icon: ReactNode;
 }> = ({ emphasis, description, icon }) => {
   return (
-    <Stack>
+    <Stack
+      maxWidth="330px"
+      minWidth={{
+        base: "100%",
+        md: "calc(100% / 3)",
+      }}
+    >
       <TestimonialContent>
         <TestimonialHeading emphasis={emphasis} />
         <Text textAlign={"center"} color="gray.600" fontSize={"sm"}>
@@ -87,6 +93,7 @@ export const Hero: VFC = () => {
         <Stack
           direction={{ base: "column", md: "row" }}
           spacing={{ base: 10, md: 4, lg: 10 }}
+          px={{ base: 4, md: 4, lg: 10 }}
           justifyContent={"center"}
         >
           <Testimonial
