@@ -16,8 +16,22 @@ interface Props {
 
 export const BlockItem: VFC<Props> = ({ coverImageUrl, name, price }) => {
   return (
-    <WrapItem w="220px">
-      <Box bg="white" w={220} borderWidth="1px" rounded="lg" shadow="lg">
+    <WrapItem
+      w={{
+        base: 150,
+        md: 220,
+      }}
+    >
+      <Box
+        bg="white"
+        w={{
+          base: 150,
+          md: 220,
+        }}
+        borderWidth="1px"
+        rounded="lg"
+        shadow="lg"
+      >
         <Box>
           <AspectRatio ratio={1}>
             <Image
