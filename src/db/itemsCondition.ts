@@ -1,4 +1,4 @@
-const conditionMap = {
+export const conditionMap = {
   0: {
     label: "新品、未使用",
     description: "購入してからあまり時間が経っておらず、一度も使用していない",
