@@ -12,7 +12,6 @@ import {
   Box,
   Stack,
   Text,
-  Flex,
   VStack,
   Button,
   Heading,
@@ -25,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { convertCondition } from "../../db/itemsCondition";
 import { convertState } from "../../db/itemState";
+import { useCheckAlreadyLogin } from "../../auth/user";
 
 export const ITEM_QUERY = gql`
   query ItemDetail($id: Int!) {
@@ -57,6 +57,7 @@ export const ITEM_QUERY = gql`
 `;
 
 const Item: NextPage = () => {
+  useCheckAlreadyLogin();
   const { data, error, loading } = useQuery<
     ItemDetailQuery,
     ItemDetailQueryVariables
@@ -78,41 +79,29 @@ const Item: NextPage = () => {
   return (
     <WithHeaderFooter>
       <SimpleGrid
-        columns={{ base: 1, lg: 2 }}
+        columns={{ base: 1, md: 2 }}
         spacing={{ base: 8, md: 10 }}
         py={{ base: 18, md: 24 }}
       >
-        <Flex>
-          {/* <Image
-            rounded={"md"}
-            alt={"product image"}
-            src={
-              "https://images.unsplash.com/photo-1596516109370-29001ec8ec36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODE1MDl8MHwxfGFsbHx8fHx8fHx8fDE2Mzg5MzY2MzE&ixlib=rb-1.2.1&q=80&w=1080"
-            }
-            fit={"cover"}
-            align={"center"}
-            w={"100%"}
-            h={{ base: "100%", sm: "400px", lg: "500px" }}
-          /> */}
-          <Box w={{ base: "100%", sm: "400px", lg: "500px" }}>
-            <Carousel
-              showStatus={false}
-              showIndicators={false}
-              infiniteLoop={true}
-              useKeyboardArrows={true}
-            >
-              {data.items_by_pk.item_images.map(({ id, url }) => {
-                return (
-                  <div key={id}>
-                    <img src={url} alt="" />
-                  </div>
-                );
-              })}
-            </Carousel>
-          </Box>
-        </Flex>
+        <Box w={{ base: "100%", sm: "400px", lg: "500px" }}>
+          <Carousel
+            showStatus={false}
+            showIndicators={false}
+            infiniteLoop={true}
+            useKeyboardArrows={true}
+          >
+            {data.items_by_pk.item_images.map(({ id, url }) => {
+              return (
+                <div key={id}>
+                  <img src={url} alt="" />
+                </div>
+              );
+            })}
+          </Carousel>
+        </Box>
+
         <Stack spacing={{ base: 6, md: 10 }}>
-          <Box as={"header"}>
+          <Box>
             <Heading
               lineHeight={1.1}
               fontWeight={600}
