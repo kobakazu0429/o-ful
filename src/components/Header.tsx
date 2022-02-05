@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/icons";
 
 export const Header = () => {
-  const { isOpen, onToggle } = useDisclosure();
+  // const { isOpen, onToggle } = useDisclosure();
 
   return (
     <Box>
@@ -38,27 +38,33 @@ export const Header = () => {
         borderColor={useColorModeValue("gray.200", "gray.900")}
         align={"center"}
       >
-        <Flex
+        {/* <Flex
           flex={{ base: 1, md: "auto" }}
           ml={{ base: -2 }}
           display={{ base: "flex", md: "none" }}
         >
-          <IconButton
-            onClick={onToggle}
-            icon={
-              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-            }
-            variant={"ghost"}
-            aria-label={"Toggle Navigation"}
-          />
-        </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
+          {NAV_ITEMS.length > 0 && (
+            <IconButton
+              onClick={onToggle}
+              icon={
+                isOpen ? (
+                  <CloseIcon w={3} h={3} />
+                ) : (
+                  <HamburgerIcon w={5} h={5} />
+                )
+              }
+              variant={"ghost"}
+              aria-label={"Toggle Navigation"}
+            />
+          )}
+        </Flex> */}
+        <Flex flex={{ base: 1 }} justify={{ base: "left", md: "start" }}>
           <Text
             textAlign={useBreakpointValue({ base: "center", md: "left" })}
             fontFamily={"heading"}
             color={useColorModeValue("gray.800", "white")}
           >
-            Logo
+            o-ful
           </Text>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
@@ -79,27 +85,36 @@ export const Header = () => {
             variant={"link"}
             href={"#"}
           >
-            Sign In
+            ログイン
+          </Button>
+          <Button
+            as={"a"}
+            fontSize={"sm"}
+            fontWeight={400}
+            variant={"link"}
+            href={"#"}
+          >
+            会員登録
           </Button>
           <Button
             display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
             fontWeight={600}
             color={"white"}
-            bg={"pink.400"}
+            bg={"pink.500"}
             href={"#"}
             _hover={{
-              bg: "pink.300",
+              bg: "pink.400",
             }}
           >
-            Sign Up
+            出品
           </Button>
         </Stack>
       </Flex>
 
-      <Collapse in={isOpen} animateOpacity>
+      {/* <Collapse in={isOpen} animateOpacity>
         <MobileNav />
-      </Collapse>
+      </Collapse> */}
     </Box>
   );
 };
@@ -265,42 +280,42 @@ interface NavItem {
 }
 
 const NAV_ITEMS: Array<NavItem> = [
-  {
-    label: "Inspiration",
-    children: [
-      {
-        label: "Explore Design Work",
-        subLabel: "Trending Design to inspire you",
-        href: "#",
-      },
-      {
-        label: "New & Noteworthy",
-        subLabel: "Up-and-coming Designers",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Find Work",
-    children: [
-      {
-        label: "Job Board",
-        subLabel: "Find your dream design job",
-        href: "#",
-      },
-      {
-        label: "Freelance Projects",
-        subLabel: "An exclusive list for contract work",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Learn Design",
-    href: "#",
-  },
-  {
-    label: "Hire Designers",
-    href: "#",
-  },
+  // {
+  //   label: "Inspiration",
+  //   children: [
+  //     {
+  //       label: "Explore Design Work",
+  //       subLabel: "Trending Design to inspire you",
+  //       href: "#",
+  //     },
+  //     {
+  //       label: "New & Noteworthy",
+  //       subLabel: "Up-and-coming Designers",
+  //       href: "#",
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: "Find Work",
+  //   children: [
+  //     {
+  //       label: "Job Board",
+  //       subLabel: "Find your dream design job",
+  //       href: "#",
+  //     },
+  //     {
+  //       label: "Freelance Projects",
+  //       subLabel: "An exclusive list for contract work",
+  //       href: "#",
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: "Learn Design",
+  //   href: "#",
+  // },
+  // {
+  //   label: "Hire Designers",
+  //   href: "#",
+  // },
 ];
