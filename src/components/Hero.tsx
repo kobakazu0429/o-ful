@@ -1,25 +1,35 @@
-import { ReactNode } from "react";
-import {
-  Box,
-  Flex,
-  Heading,
-  Text,
-  Stack,
-  Container,
-  Avatar,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import type { VFC, FC, ReactNode } from "react";
+import { Box, Flex, Heading, Text, Stack, Container } from "@chakra-ui/react";
+import { GraduatesIcon } from "../icon/graduates";
+import { StudiesIcon } from "../icon/studies";
 
-const Testimonial = ({ children }: { children: ReactNode }) => {
-  return <Box>{children}</Box>;
+const Testimonial: VFC<{
+  emphasis: string;
+  description: string;
+  icon: ReactNode;
+}> = ({ emphasis, description, icon }) => {
+  return (
+    <Stack>
+      <TestimonialContent>
+        <TestimonialHeading emphasis={emphasis} />
+        <Text textAlign={"center"} color="gray.600" fontSize={"sm"}>
+          {description}
+        </Text>
+      </TestimonialContent>
+      <Flex align={"center"} mt={8} direction={"column"}>
+        <Box width={70}>{icon}</Box>
+      </Flex>
+    </Stack>
+  );
 };
 
-const TestimonialContent = ({ children }: { children: ReactNode }) => {
+const TestimonialContent: FC = ({ children }) => {
   return (
     <Stack
-      bg={useColorModeValue("white", "gray.800")}
+      bg="white"
       boxShadow={"lg"}
-      p={8}
+      py={8}
+      px={4}
       rounded={"xl"}
       align={"center"}
       pos={"relative"}
@@ -33,105 +43,67 @@ const TestimonialContent = ({ children }: { children: ReactNode }) => {
         borderRightWidth: 16,
         borderTop: "solid",
         borderTopWidth: 16,
-        borderTopColor: useColorModeValue("white", "gray.800"),
+        borderTopColor: "white",
         pos: "absolute",
         bottom: "-16px",
         left: "50%",
         transform: "translateX(-50%)",
       }}
+      marginBottom={"16px"}
     >
       {children}
     </Stack>
   );
 };
 
-const TestimonialHeading = ({ children }: { children: ReactNode }) => {
+const TestimonialHeading: VFC<{ emphasis: string }> = ({ emphasis }) => {
   return (
-    <Heading as={"h3"} fontSize={"xl"}>
-      {children}
+    <Heading as={"h3"} fontSize="xl">
+      <Text as={"span"} bgGradient="linear(transparent 70%, yellow.300 70%)">
+        {emphasis}
+      </Text>
+      <Text as={"span"} fontSize="md" fontWeight="semibold">
+        {" "}
+        あなたに
+      </Text>
     </Heading>
   );
 };
 
-const TestimonialText = ({ children }: { children: ReactNode }) => {
+export const Hero: VFC = () => {
   return (
-    <Text
-      textAlign={"center"}
-      color={useColorModeValue("gray.600", "gray.400")}
-      fontSize={"sm"}
-    >
-      {children}
-    </Text>
-  );
-};
-
-const TestimonialAvatar = ({ src, name }: { src: string; name: string }) => {
-  return (
-    <Flex align={"center"} mt={8} direction={"column"}>
-      <Avatar src={src} alt={name} mb={2} />
-      <Stack spacing={-1} align={"center"}>
-        <Text fontWeight={600}>{name}</Text>
-      </Stack>
-    </Flex>
-  );
-};
-
-export const Hero = () => {
-  return (
-    <Box bg={useColorModeValue("gray.100", "gray.700")}>
+    <Box bg="gray.100">
       <Container maxW={"7xl"} py={16} as={Stack} spacing={12}>
         <Stack spacing={0} align={"center"}>
-          <Heading>あなたの教科書、誰かに使ってもらいませんか？</Heading>
-          {/* <Text>We have been working with clients around the world</Text> */}
+          <Heading textAlign="center">
+            <span style={{ display: "inline-block" }}>
+              あなたの教科書、誰かに
+            </span>
+            <span style={{ display: "inline-block" }}>
+              使ってもらいませんか？
+            </span>
+          </Heading>
         </Stack>
         <Stack
           direction={{ base: "column", md: "row" }}
           spacing={{ base: 10, md: 4, lg: 10 }}
+          justifyContent={"center"}
         >
-          <Testimonial>
-            <TestimonialContent>
-              <TestimonialHeading>売りたいあなたに</TestimonialHeading>
-              <TestimonialText>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor.
-              </TestimonialText>
-            </TestimonialContent>
-            <TestimonialAvatar
-              src={
-                "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"
-              }
-              name={"Jane Cooper"}
-            />
-          </Testimonial>
-          <Testimonial>
-            <TestimonialContent>
-              <TestimonialHeading>譲りたいあなたに</TestimonialHeading>
-              <TestimonialText>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor.
-              </TestimonialText>
-            </TestimonialContent>
-            <TestimonialAvatar
-              src={
-                "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"
-              }
-              name={"Jane Cooper"}
-            />
-          </Testimonial>
-          <Testimonial>
-            <TestimonialContent>
-              <TestimonialHeading>
-                買いたい、もらいたいあなたに
-              </TestimonialHeading>
-              <TestimonialText>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor.
-              </TestimonialText>
-            </TestimonialContent>
-            <TestimonialAvatar
-              src={
-                "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"
-              }
-              name={"Jane Cooper"}
-            />
-          </Testimonial>
+          <Testimonial
+            emphasis="売りたい"
+            description="要らない教科書を捨てるのはもったいない！"
+            icon={<GraduatesIcon />}
+          />
+          <Testimonial
+            emphasis="あげたい"
+            description="後輩に役立てて欲しい！"
+            icon={<GraduatesIcon />}
+          />
+          <Testimonial
+            emphasis="欲しい"
+            description="専門の教科書高いんだよなぁ..."
+            icon={<StudiesIcon />}
+          />
         </Stack>
       </Container>
     </Box>
