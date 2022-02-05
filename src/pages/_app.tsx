@@ -13,6 +13,12 @@ import { initializeApollo } from "../lib/apolloClient";
 const theme = extendTheme({
   styles: {
     global: () => ({
+      "html, body, #__next": {
+        height: "100%",
+        minHeight: "100vh",
+        margin: 0,
+        padding: 0,
+      },
       fonts: {
         ...chakraTheme.fonts,
         heading: `-apple-system,BlinkMacSystemFont,Hiragino Kaku Gothic ProN,Hiragino Sans,Meiryo,sans-serif,Segoe UI Emoji`,
