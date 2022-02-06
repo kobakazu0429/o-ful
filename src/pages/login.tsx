@@ -74,6 +74,9 @@ const Login: NextPage = () => {
           <Text color={"gray.600"}>
             現在、Twitterでのログインのみに対応しています。
           </Text>
+          <Text color={"gray.600"} paddingBottom="32px">
+            シークレットモードではご利用できません。
+          </Text>
 
           <TwitterLoginButton
             align="center"
