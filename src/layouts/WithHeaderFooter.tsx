@@ -7,7 +7,7 @@ export const WithHeaderFooter: FC = ({ children }) => {
   return (
     <Flex direction={"column"} height="100%">
       <Header />
-      <Container maxW={"7xl"} flex="1">
+      <Container maxW={"7xl"} flex="1" my={8}>
         {children}
       </Container>
       <Footer />

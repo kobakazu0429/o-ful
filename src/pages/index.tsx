@@ -1,9 +1,10 @@
 import type { NextPage } from "next";
+import { Wrap, Heading } from "@chakra-ui/react";
+import { useCheckAlreadyLogin } from "../auth/user";
 import { Header } from "../components/Header";
 import { BlockItem } from "../components/BlockItem";
 import { Hero } from "../components/Hero";
-import { Wrap, Heading } from "@chakra-ui/react";
-import { useCheckAlreadyLogin } from "../auth/user";
+import { Footer } from "../components/Footer";
 
 const Home: NextPage<{
   data: {
@@ -52,6 +53,7 @@ const Home: NextPage<{
           />
         ))}
       </Wrap>
+      <Footer />
     </>
   );
 };
