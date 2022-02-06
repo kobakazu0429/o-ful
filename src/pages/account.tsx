@@ -100,13 +100,26 @@ const ItemDetail: VFC<{
   items: Items;
 }> = ({ items }) => {
   return (
-    <Box mx="auto" p="6">
-      <Stack spacing={8}>
-        {items.map(({ item }) => (
-          <CartItem key={item.id} item={item} />
-        ))}
-      </Stack>
-    </Box>
+    <VStack
+      spacing={4}
+      align="stretch"
+      width="full"
+      maxWidth={"full"}
+      overflow={"hidden"}
+    >
+      <Heading as="h2" fontSize={"3xl"}>
+        出品情報
+      </Heading>
+      <Box bg="white" borderWidth="1px" rounded="lg">
+        <Box mx="auto" p="6">
+          <Stack spacing={8}>
+            {items.map(({ item }) => (
+              <CartItem key={item.id} item={item} />
+            ))}
+          </Stack>
+        </Box>
+      </Box>
+    </VStack>
   );
 };
 
@@ -203,22 +216,10 @@ const Account: NextPage = () => {
               auth.signOut();
             }}
           />
-
-          <VStack
-            spacing={4}
-            align="stretch"
-            width="full"
-            maxWidth={"full"}
-            overflow={"hidden"}
-          >
-            <Heading as="h2" fontSize={"3xl"}>
-              出品情報
-            </Heading>
-            <Box bg="white" borderWidth="1px" rounded="lg">
-              {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
-              <ItemDetail items={data?.users[0].user_items!} />
-            </Box>
-          </VStack>
+          <ItemDetail
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            items={data?.users[0].user_items!}
+          />
         </Stack>
       </WithHeaderFooter>
     );
