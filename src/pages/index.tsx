@@ -1,12 +1,13 @@
 import type { NextPage } from "next";
 import Link from "next/link";
-import { Wrap, Heading, Text, Spinner } from "@chakra-ui/react";
+import { Wrap, Heading } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import { useCheckAlreadyLogin } from "../auth/user";
 import { Header } from "../components/Header";
 import { BlockItem } from "../components/BlockItem";
 import { Hero } from "../components/Hero";
 import { Footer } from "../components/Footer";
+import { WithLoading } from "../components/Loading";
 import { RecentItemsQuery } from "../generated/graphql";
 
 const ITEMS_QUERY = gql`
@@ -48,18 +49,8 @@ const Home: NextPage = () => {
           xl: "80%",
         }}
       >
-        {loading ? (
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        ) : error ? (
-          <Text>エラーが発生しました。ページを更新してみてください。</Text>
-        ) : (
-          data?.items.map((item) => (
+        <WithLoading error={error} loading={loading}>
+          {data?.items.map((item) => (
             <Link key={item.id} href={`/items/${item.id}`}>
               <a>
                 <BlockItem
@@ -69,8 +60,8 @@ const Home: NextPage = () => {
                 />
               </a>
             </Link>
-          ))
-        )}
+          ))}
+        </WithLoading>
       </Wrap>
       <Footer />
     </>

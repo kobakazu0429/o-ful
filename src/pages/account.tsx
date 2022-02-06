@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import { useSession, signOut, SessionContextValue } from "next-auth/react";
+import { useRouter } from "next/router";
 import { getAuth } from "firebase/auth";
 import { useCheckAlreadyLogin } from "../auth/user";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
@@ -24,6 +25,7 @@ import {
   UserItemsByUidQueryVariables,
 } from "../generated/graphql";
 import { convertState } from "../db/itemState";
+import { WithLoading } from "../components/Loading";
 
 const USER_ITEMS_QUERY = gql`
   query UserItemsByUid($uid: String!) {
@@ -179,55 +181,51 @@ export function formatPrice(value: number) {
 
 const Account: NextPage = () => {
   useCheckAlreadyLogin();
+  const router = useRouter();
   const session = useSession();
   const auth = getAuth(firebaseApp);
   // @ts-expect-error
   const uid = auth.currentUser?.uid ?? session.data?.user?.uid ?? "";
-  console.log(uid);
 
   const { data, error, loading } = useQuery<
     UserItemsByUidQuery,
     UserItemsByUidQueryVariables
   >(USER_ITEMS_QUERY, { variables: { uid } });
 
-  console.log(data);
-
-  if (session.status === "loading" || loading) {
+  if (!uid)
     return (
       <WithHeaderFooter>
-        <p>loading...</p>
+        <Text>こちらのページはログインしなければ使えません。</Text>
       </WithHeaderFooter>
     );
-  }
-
-  if (session?.status === "authenticated") {
-    return (
-      <WithHeaderFooter>
-        <Stack
-          direction={{ base: "column", xl: "row" }}
-          spacing={{ base: 10 }}
-          justifyContent={"center"}
-        >
-          <UserDetail
-            // @ts-expect-error
-            user={session.data.user}
-            logout={() => {
-              signOut();
-              auth.signOut();
-            }}
-          />
-          <ItemDetail
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            items={data?.users[0].user_items!}
-          />
-        </Stack>
-      </WithHeaderFooter>
-    );
-  }
 
   return (
     <WithHeaderFooter>
-      <p>a</p>
+      <WithLoading
+        loading={session.status === "loading" || loading}
+        error={error}
+      >
+        {session?.status === "authenticated" && (
+          <Stack
+            direction={{ base: "column", xl: "row" }}
+            spacing={{ base: 10 }}
+            justifyContent={"center"}
+          >
+            <UserDetail
+              // @ts-expect-error
+              user={session.data.user}
+              logout={async () => {
+                await Promise.all([signOut(), auth.signOut()]);
+                router.push("/");
+              }}
+            />
+            <ItemDetail
+              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+              items={data?.users[0].user_items!}
+            />
+          </Stack>
+        )}
+      </WithLoading>
     </WithHeaderFooter>
   );
 };
