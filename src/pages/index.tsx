@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { Wrap, Heading } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
-import { useCheckAlreadyLogin } from "../auth/user";
 import { Header } from "../components/Header";
 import { BlockItem } from "../components/BlockItem";
 import { Hero } from "../components/Hero";
@@ -24,7 +23,6 @@ const ITEMS_QUERY = gql`
 `;
 
 const Home: NextPage = () => {
-  useCheckAlreadyLogin();
   const { data, loading, error } = useQuery<RecentItemsQuery>(ITEMS_QUERY);
 
   return (
@@ -54,7 +52,10 @@ const Home: NextPage = () => {
             <Link key={item.id} href={`/items/${item.id}`}>
               <a>
                 <BlockItem
-                  coverImageUrl={item.item_images[0].url}
+                  coverImageUrl={
+                    item.item_images[0]?.url ??
+                    "https://placehold.jp/150x150.png?text=no image"
+                  }
                   name={item.name}
                   price={item.price}
                 />

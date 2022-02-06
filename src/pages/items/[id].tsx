@@ -24,7 +24,6 @@ import {
 } from "@chakra-ui/react";
 import { convertCondition } from "../../db/itemsCondition";
 import { convertState } from "../../db/itemState";
-import { useCheckAlreadyLogin } from "../../auth/user";
 import { WithLoading } from "../../components/Loading";
 import { useRouter } from "next/router";
 
@@ -59,7 +58,6 @@ export const ITEM_QUERY = gql`
 `;
 
 const Item: NextPage = () => {
-  useCheckAlreadyLogin();
   const router = useRouter();
   const { id } = router.query;
   const { data, error, loading } = useQuery<

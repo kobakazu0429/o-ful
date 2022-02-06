@@ -1,11 +1,11 @@
 import { useMemo, VFC } from "react";
 import Link from "next/link";
 import { Box, Flex, Text, Button, Stack } from "@chakra-ui/react";
-import { getUser } from "../auth/user";
+import { useSession } from "next-auth/react";
 
 export const Header: VFC = () => {
-  const user = getUser();
-  const isLogin = useMemo(() => !!user, [user]);
+  const session = useSession();
+  const isLogin = useMemo(() => !!session.data, [session]);
 
   return (
     <Box as="header">
@@ -48,7 +48,7 @@ export const Header: VFC = () => {
                 fontWeight={600}
                 variant={"link"}
               >
-                {user?.displayName}{" "}
+                {session.data?.user?.name}{" "}
                 <Text as="span" fontWeight={400}>
                   さん
                 </Text>

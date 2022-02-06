@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import { useSession, signOut, SessionContextValue } from "next-auth/react";
 import { useRouter } from "next/router";
 import { getAuth } from "firebase/auth";
-import { useCheckAlreadyLogin } from "../auth/user";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
 import { firebaseApp } from "../lib/firebase";
 import {
@@ -180,11 +179,9 @@ export function formatPrice(value: number) {
 }
 
 const Account: NextPage = () => {
-  useCheckAlreadyLogin();
   const router = useRouter();
   const session = useSession();
   const auth = getAuth(firebaseApp);
-  // @ts-expect-error
   const uid = auth.currentUser?.uid ?? session.data?.user?.uid ?? "";
 
   const { data, error, loading } = useQuery<

@@ -29,7 +29,6 @@ import type {
 } from "../../generated/graphql";
 import { WithLoading } from "../../components/Loading";
 import { useSession } from "next-auth/react";
-import { useCheckAlreadyLogin } from "../../auth/user";
 
 const TAGS_QUERY = gql`
   query Tags {
@@ -96,8 +95,6 @@ const Create: NextPage = () => {
   } = useForm<Inputs>({ mode: "onChange", criteriaMode: "all" });
   const session = useSession();
   const isLogin = useMemo(() => !!session.data, [session]);
-
-  useCheckAlreadyLogin();
 
   const {
     data: tagsQueryData,
