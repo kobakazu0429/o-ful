@@ -25,6 +25,8 @@ import {
 import { convertCondition } from "../../db/itemsCondition";
 import { convertState } from "../../db/itemState";
 import { useCheckAlreadyLogin } from "../../auth/user";
+import { WithLoading } from "../../components/Loading";
+import { useRouter } from "next/router";
 
 export const ITEM_QUERY = gql`
   query ItemDetail($id: Int!) {
@@ -58,141 +60,137 @@ export const ITEM_QUERY = gql`
 
 const Item: NextPage = () => {
   useCheckAlreadyLogin();
+  const router = useRouter();
+  const { id } = router.query;
   const { data, error, loading } = useQuery<
     ItemDetailQuery,
     ItemDetailQueryVariables
   >(ITEM_QUERY, {
-    variables: { id: 1 },
+    variables: { id },
   });
-
-  if (loading) {
-    return <p>loading...</p>;
-  }
-
-  if (!data || !data.items_by_pk || error) {
-    console.log(error);
-    return <p>error</p>;
-  }
-
-  console.log(data);
 
   return (
     <WithHeaderFooter>
-      <SimpleGrid
-        columns={{ base: 1, md: 2 }}
-        spacing={{ base: 8, md: 10 }}
-        py={{ base: 18, md: 24 }}
-      >
-        <Box w={{ base: "100%", sm: "400px", lg: "500px" }}>
-          <Carousel
-            showStatus={false}
-            showIndicators={false}
-            infiniteLoop={true}
-            useKeyboardArrows={true}
-          >
-            {data.items_by_pk.item_images.map(({ id, url }) => {
-              return (
-                <div key={id}>
-                  <img src={url} alt="" />
-                </div>
-              );
-            })}
-          </Carousel>
-        </Box>
-
-        <Stack spacing={{ base: 6, md: 10 }}>
-          <Box>
-            <Heading
-              lineHeight={1.1}
-              fontWeight={600}
-              fontSize={{ base: "2xl", sm: "4xl", lg: "5xl" }}
+      <WithLoading loading={loading} error={error}>
+        <SimpleGrid
+          columns={{ base: 1, md: 2 }}
+          spacing={{ base: 8, md: 10 }}
+          py={{ base: 18, md: 24 }}
+        >
+          <Box w={{ base: "100%", sm: "400px", lg: "500px" }}>
+            <Carousel
+              showStatus={false}
+              showIndicators={false}
+              infiniteLoop={true}
+              useKeyboardArrows={true}
             >
-              {data.items_by_pk.name}
-            </Heading>
-            <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-              出品者: {data.items_by_pk.user_item?.user.nickname} さん
-            </Text>
-            <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-              出品者: {data.items_by_pk.user_item?.user.user_sns_id?.twitter_id}{" "}
-              さん
-            </Text>
-            <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-              参考価格: &yen; {data.items_by_pk.price.toLocaleString()}
-            </Text>
+              {data?.items_by_pk?.item_images.map(({ id, url }) => {
+                return (
+                  <div key={id}>
+                    <img src={url} alt="" />
+                  </div>
+                );
+              })}
+            </Carousel>
           </Box>
 
-          <Stack
-            spacing={{ base: 4, sm: 6 }}
-            direction={"column"}
-            divider={<StackDivider borderColor={"gray.200"} />}
-          >
-            <VStack spacing={{ base: 4, sm: 6 }} align="left">
-              <Text fontSize={"lg"}>{data.items_by_pk.description}</Text>
-            </VStack>
+          <Stack spacing={{ base: 6, md: 10 }}>
             <Box>
-              <Text
-                fontSize={{ base: "16px", lg: "18px" }}
-                color={"yellow.500"}
-                fontWeight={"500"}
-                mb={"4"}
+              <Heading
+                lineHeight={1.1}
+                fontWeight={600}
+                fontSize={{ base: "2xl", sm: "4xl", lg: "5xl" }}
               >
-                タグ
+                {data?.items_by_pk?.name}
+              </Heading>
+              <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
+                出品者: {data?.items_by_pk?.user_item?.user.nickname} さん
               </Text>
-
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
-                <HStack spacing={4}>
-                  {data.items_by_pk.item_tags.map(({ tag }) => {
-                    return <Tag key={tag.id}>{tag.name}</Tag>;
-                  })}
-                </HStack>
-              </SimpleGrid>
-            </Box>
-            <Box>
-              <Text
-                fontSize={{ base: "16px", lg: "18px" }}
-                color={"yellow.500"}
-                fontWeight={"500"}
-                textTransform={"uppercase"}
-                mb={"4"}
-              >
-                詳細
+              <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
+                出品者:{" "}
+                {data?.items_by_pk?.user_item?.user.user_sns_id?.twitter_id}{" "}
+                さん
               </Text>
-
-              <List spacing={2}>
-                <ListItem>
-                  <Text as={"span"} fontWeight={"bold"}>
-                    状況:
-                  </Text>{" "}
-                  {convertState(data.items_by_pk.state)}
-                </ListItem>
-                <ListItem>
-                  <Text as={"span"} fontWeight={"bold"}>
-                    コンディション:
-                  </Text>{" "}
-                  {convertCondition(data.items_by_pk.condition).label}
-                </ListItem>
-              </List>
+              <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
+                参考価格: &yen; {data?.items_by_pk?.price.toLocaleString()}
+              </Text>
             </Box>
+
+            <Stack
+              spacing={{ base: 4, sm: 6 }}
+              direction={"column"}
+              divider={<StackDivider borderColor={"gray.200"} />}
+            >
+              <VStack spacing={{ base: 4, sm: 6 }} align="left">
+                <Text fontSize={"lg"}>{data?.items_by_pk?.description}</Text>
+              </VStack>
+              <Box>
+                <Text
+                  fontSize={{ base: "16px", lg: "18px" }}
+                  color={"yellow.500"}
+                  fontWeight={"500"}
+                  mb={"4"}
+                >
+                  タグ
+                </Text>
+
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+                  <HStack spacing={4}>
+                    {data?.items_by_pk?.item_tags.map(({ tag }) => {
+                      return <Tag key={tag.id}>{tag.name}</Tag>;
+                    })}
+                  </HStack>
+                </SimpleGrid>
+              </Box>
+              <Box>
+                <Text
+                  fontSize={{ base: "16px", lg: "18px" }}
+                  color={"yellow.500"}
+                  fontWeight={"500"}
+                  textTransform={"uppercase"}
+                  mb={"4"}
+                >
+                  詳細
+                </Text>
+
+                <List spacing={2}>
+                  <ListItem>
+                    <Text as={"span"} fontWeight={"bold"}>
+                      状況:
+                    </Text>{" "}
+                    {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
+                    {convertState(data?.items_by_pk?.state!)}
+                  </ListItem>
+                  <ListItem>
+                    <Text as={"span"} fontWeight={"bold"}>
+                      コンディション:
+                    </Text>{" "}
+                    {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
+                    {convertCondition(data?.items_by_pk?.condition!).label}
+                  </ListItem>
+                </List>
+              </Box>
+            </Stack>
+
+            <Button
+              rounded={"none"}
+              w={"full"}
+              mt={8}
+              size={"lg"}
+              py={"7"}
+              bg={"gray.900"}
+              color={"white"}
+              textTransform={"uppercase"}
+              _hover={{
+                transform: "translateY(2px)",
+                boxShadow: "lg",
+              }}
+            >
+              出品者と詳しく話す
+            </Button>
           </Stack>
-
-          <Button
-            rounded={"none"}
-            w={"full"}
-            mt={8}
-            size={"lg"}
-            py={"7"}
-            bg={"gray.900"}
-            color={"white"}
-            textTransform={"uppercase"}
-            _hover={{
-              transform: "translateY(2px)",
-              boxShadow: "lg",
-            }}
-          >
-            出品者と詳しく話す
-          </Button>
-        </Stack>
-      </SimpleGrid>
+        </SimpleGrid>
+      </WithLoading>
     </WithHeaderFooter>
   );
 };
