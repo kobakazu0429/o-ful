@@ -11,7 +11,7 @@ import {
 import type { AuthProvider } from "firebase/auth";
 import { firebaseApp } from "../lib/firebase";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
-import { Heading, Text, Flex, Stack } from "@chakra-ui/react";
+import { Heading, Text, Flex, Stack, Box } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useCheckAlreadyLogin } from "../auth/user";
 
@@ -59,17 +59,17 @@ const Login: NextPage = () => {
           align={"center"}
           textAlign={"center"}
         >
-          <Heading fontSize={"4xl"}>
-            <Text as="h1" display="inline-block">
+          <Box>
+            <Heading as="h1" display="inline-block" fontSize={"4xl"}>
               会員登録
-            </Text>
-            <Text as="h1" display="inline-block">
+            </Heading>
+            <Heading as="h1" display="inline-block" fontSize={"4xl"}>
               &nbsp;/&nbsp;
-            </Text>
-            <Text as="h1" display="inline-block">
+            </Heading>
+            <Heading as="h1" display="inline-block" fontSize={"4xl"}>
               ログイン
-            </Text>
-          </Heading>
+            </Heading>
+          </Box>
 
           <Text color={"gray.600"}>
             現在、Twitterでのログインのみに対応しています。
