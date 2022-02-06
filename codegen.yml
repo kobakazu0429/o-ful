@@ -3,8 +3,7 @@ schema:
  - "https://o-ful.herokuapp.com/v1/graphql":
     headers:
       "x-hasura-admin-secret": ${HASURA_ADMIN_SECRET}
-      # will be user
-      "x-hasura-role": "admin"
+      "x-hasura-role": "user"
 documents:
   - "./src/**/*.tsx"
   - "./src/**/*.ts"

@@ -1,3 +1,4 @@
+import { getUser } from "./../auth/user";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import type { NormalizedCacheObject } from "@apollo/client";
 
@@ -6,12 +7,15 @@ export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 let apolloClient: ApolloClient<NormalizedCacheObject> | undefined;
 
 const createApolloClient = () => {
+  const uid = getUser()?.uid ?? "";
+
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
       uri: "https://o-ful.herokuapp.com/v1/graphql",
       headers: {
-        "x-hasura-admin-secret": "",
+        "x-hasura-role": "user",
+        "x-hasura-uid": uid,
       },
     }),
     cache: new InMemoryCache(),

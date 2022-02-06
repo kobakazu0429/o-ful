@@ -1,27 +1,30 @@
 import type { NextPage } from "next";
-import { Wrap, Heading } from "@chakra-ui/react";
+import Link from "next/link";
+import { Wrap, Heading, Text, Spinner } from "@chakra-ui/react";
+import { gql, useQuery } from "@apollo/client";
 import { useCheckAlreadyLogin } from "../auth/user";
 import { Header } from "../components/Header";
 import { BlockItem } from "../components/BlockItem";
 import { Hero } from "../components/Hero";
 import { Footer } from "../components/Footer";
+import { RecentItemsQuery } from "../generated/graphql";
 
-const Home: NextPage<{
-  data: {
-    id: string;
-    description: string;
-    urls: {
-      raw: string;
-      full: string;
-      regular: string;
-      small: string;
-      thumb: string;
-      small_s3: string;
-    };
-    likes: number;
-  }[];
-}> = ({ data }) => {
+const ITEMS_QUERY = gql`
+  query RecentItems {
+    items(order_by: { updated_at: asc }) {
+      id
+      name
+      price
+      item_images {
+        url
+      }
+    }
+  }
+`;
+
+const Home: NextPage = () => {
   useCheckAlreadyLogin();
+  const { data, loading, error } = useQuery<RecentItemsQuery>(ITEMS_QUERY);
 
   return (
     <>
@@ -32,6 +35,7 @@ const Home: NextPage<{
       </Heading>
 
       <Wrap
+        mb={8}
         marginX="auto"
         spacing={{
           base: "10px",
@@ -44,29 +48,33 @@ const Home: NextPage<{
           xl: "80%",
         }}
       >
-        {data.map((d) => (
-          <BlockItem
-            key={d.id}
-            coverImageUrl={d.urls.small}
-            name={d.description}
-            price={d.likes}
+        {loading ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
           />
-        ))}
+        ) : error ? (
+          <Text>エラーが発生しました。ページを更新してみてください。</Text>
+        ) : (
+          data?.items.map((item) => (
+            <Link key={item.id} href={`/items/${item.id}`}>
+              <a>
+                <BlockItem
+                  coverImageUrl={item.item_images[0].url}
+                  name={item.name}
+                  price={item.price}
+                />
+              </a>
+            </Link>
+          ))
+        )}
       </Wrap>
       <Footer />
     </>
   );
 };
-
-export async function getServerSideProps() {
-  // Fetch data from external API
-  const res = await fetch(
-    `https://api.unsplash.com//photos/random/?client_id=Q3MYf9f6AkMDXdkHX_yA7qbYGPFQ_FWfjGjP_9AvamM&query=item&count=30`
-  );
-  const data = await res.json();
-
-  // Pass data to the page via props
-  return { props: { data } };
-}
 
 export default Home;
