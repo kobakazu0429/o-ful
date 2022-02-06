@@ -66,7 +66,7 @@ const Item: NextPage = () => {
     ItemDetailQuery,
     ItemDetailQueryVariables
   >(ITEM_QUERY, {
-    variables: { id },
+    variables: { id: Number(id) },
   });
 
   return (
@@ -77,7 +77,7 @@ const Item: NextPage = () => {
           spacing={{ base: 8, md: 10 }}
           py={{ base: 18, md: 24 }}
         >
-          <Box w={{ base: "100%", sm: "400px", lg: "500px" }}>
+          <Box w="full" maxWidth={{ nase: "100%", md: "500px" }}>
             <Carousel
               showStatus={false}
               showIndicators={false}
@@ -94,12 +94,13 @@ const Item: NextPage = () => {
             </Carousel>
           </Box>
 
-          <Stack spacing={{ base: 6, md: 10 }}>
+          <Stack spacing={{ base: 6, md: 10 }} w={{ base: "100%" }}>
             <Box>
               <Heading
                 lineHeight={1.1}
                 fontWeight={600}
                 fontSize={{ base: "2xl", sm: "4xl", lg: "5xl" }}
+                width={"full"}
               >
                 {data?.items_by_pk?.name}
               </Heading>
