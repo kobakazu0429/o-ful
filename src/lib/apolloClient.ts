@@ -1,35 +1,46 @@
-import { getUser } from "./../auth/user";
+import { useEffect, useState } from "react";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import type { NormalizedCacheObject } from "@apollo/client";
+import { useSession } from "next-auth/react";
 
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
-let apolloClient: ApolloClient<NormalizedCacheObject> | undefined;
+export const useApollo = () => {
+  const session = useSession();
+  const cache = new InMemoryCache();
 
-const createApolloClient = () => {
-  const uid = getUser()?.uid ?? "";
+  const [apolloClient, setApolloClient] = useState<
+    ApolloClient<NormalizedCacheObject>
+  >(
+    new ApolloClient({
+      ssrMode: typeof window === "undefined",
+      link: new HttpLink({
+        uri: "https://o-ful.herokuapp.com/v1/graphql",
+        headers: {
+          "x-hasura-role": "user",
+          "x-hasura-uid": session.data?.user?.uid ?? "",
+        },
+      }),
+      cache,
+    })
+  );
 
-  return new ApolloClient({
-    ssrMode: typeof window === "undefined",
-    link: new HttpLink({
-      uri: "https://o-ful.herokuapp.com/v1/graphql",
-      headers: {
-        "x-hasura-role": "user",
-        "x-hasura-uid": uid,
-      },
-    }),
-    cache: new InMemoryCache(),
-  });
-};
+  useEffect(() => {
+    setApolloClient(
+      new ApolloClient({
+        ssrMode: typeof window === "undefined",
+        link: new HttpLink({
+          uri: "https://o-ful.herokuapp.com/v1/graphql",
+          headers: {
+            "x-hasura-role": "user",
+            "x-hasura-uid": session.data?.user?.uid ?? "",
+          },
+        }),
+        cache,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
-export const initializeApollo = () => {
-  const _apolloClient = apolloClient ?? createApolloClient();
-
-  // For SSG and SSR always create a new Apollo Client
-  if (typeof window === "undefined") return _apolloClient;
-
-  // Create the Apollo Client once in the client
-  if (!apolloClient) apolloClient = _apolloClient;
-
-  return _apolloClient;
+  return apolloClient;
 };

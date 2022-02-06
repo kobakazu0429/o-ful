@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import type { FC } from "react";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { RecoilRoot } from "recoil";
@@ -8,7 +9,7 @@ import {
   extendTheme,
   theme as chakraTheme,
 } from "@chakra-ui/react";
-import { initializeApollo } from "../lib/apolloClient";
+import { useApollo } from "../lib/apolloClient";
 
 const theme = extendTheme({
   styles: {
@@ -27,16 +28,20 @@ const theme = extendTheme({
   },
 });
 
+const MyApolloProvider: FC = ({ children }) => {
+  const client = useApollo();
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+};
+
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
-  const client = initializeApollo();
   return (
     <RecoilRoot>
       <SessionProvider session={session}>
-        <ApolloProvider client={client}>
+        <MyApolloProvider>
           <ChakraProvider theme={theme}>
             <Component {...pageProps} />
           </ChakraProvider>
-        </ApolloProvider>
+        </MyApolloProvider>
       </SessionProvider>
     </RecoilRoot>
   );
