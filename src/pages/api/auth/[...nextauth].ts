@@ -8,11 +8,11 @@ export default NextAuth({
     CredentialsProvider({
       authorize: async (credentials, _req) => {
         // @ts-expect-error
-        const { idToken } = credentials;
+        const { idToken, twitterId } = credentials;
         if (idToken) {
           try {
             const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
-            return { ...decoded };
+            return { ...decoded, twitterId };
           } catch (error) {
             console.log("Failed to verify ID token:", error);
           }
@@ -35,6 +35,8 @@ export default NextAuth({
 
       // @ts-expect-error
       session.user.uid = token.uid;
+      // @ts-expect-error
+      session.user.twitterId = token.twitterId;
       return session;
     },
   },

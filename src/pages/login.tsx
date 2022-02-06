@@ -35,9 +35,14 @@ const Login: NextPage = () => {
       const credential = await getRedirectResult(auth);
       if (!credential) return;
 
+      const twitterId = JSON.parse(
+        // @ts-expect-error
+        credential._tokenResponse.rawUserInfo
+      ).screen_name;
+
       // ID トークンを NextAuth に渡す
       const idToken = await credential.user.getIdToken(true);
-      await signIn("credentials", { idToken });
+      await signIn("credentials", { idToken, twitterId });
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
