@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { firebaseAdmin } from "../../../lib/firebaseAdmin";
 
 export default NextAuth({
-  secret: process.env.NEXT_AUTH_SECRET,
   providers: [
     // @ts-expect-error
     CredentialsProvider({
