@@ -58,9 +58,6 @@ export const BlockItem: VFC<Props> = ({ coverImageUrl, name, price }) => {
 
         <Box pb="3" px="3">
           <Text fontSize="xl" color="gray.800">
-            <Text as="span" color={"gray.600"} fontSize="md">
-              &yen;{" "}
-            </Text>
             {formatPrice(price)}
           </Text>
         </Box>

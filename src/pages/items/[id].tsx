@@ -112,7 +112,7 @@ const Item: NextPage = () => {
                 さん
               </Text>
               <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-                参考価格: &yen; {formatPrice(data?.items_by_pk?.price)}
+                参考価格: {formatPrice(data?.items_by_pk?.price)}
               </Text>
             </Box>
 
