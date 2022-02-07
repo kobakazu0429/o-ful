@@ -26,6 +26,7 @@ import { convertCondition } from "../../db/itemsCondition";
 import { convertState } from "../../db/itemState";
 import { WithLoading } from "../../components/Loading";
 import { useRouter } from "next/router";
+import { formatPrice } from "../../utils/price";
 
 export const ITEM_QUERY = gql`
   query ItemDetail($id: Int!) {
@@ -111,7 +112,7 @@ const Item: NextPage = () => {
                 さん
               </Text>
               <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-                参考価格: &yen; {data?.items_by_pk?.price.toLocaleString()}
+                参考価格: &yen; {formatPrice(data?.items_by_pk?.price)}
               </Text>
             </Box>
 

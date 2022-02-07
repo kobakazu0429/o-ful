@@ -24,6 +24,7 @@ import {
 } from "../generated/graphql";
 import { convertState } from "../db/itemState";
 import { WithLoading } from "../components/Loading";
+import { formatPrice } from "../utils/price";
 
 const USER_ITEMS_QUERY = gql`
   query UserItemsByUid($uid: String!) {
@@ -168,14 +169,6 @@ const CartItem: VFC<{ item: Items[number]["item"] }> = ({
     </Flex>
   );
 };
-
-export function formatPrice(value: number) {
-  const formatter = new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency: "JPY",
-  });
-  return formatter.format(value);
-}
 
 const Account: NextPage = () => {
   const session = useSession();
