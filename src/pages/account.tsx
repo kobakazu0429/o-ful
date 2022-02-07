@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import { useSession, signOut, SessionContextValue } from "next-auth/react";
-import { useRouter } from "next/router";
 import { getAuth } from "firebase/auth";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
 import { firebaseApp } from "../lib/firebase";
@@ -179,7 +178,6 @@ export function formatPrice(value: number) {
 }
 
 const Account: NextPage = () => {
-  const router = useRouter();
   const session = useSession();
   const auth = getAuth(firebaseApp);
   const uid = auth.currentUser?.uid ?? session.data?.user?.uid ?? "";
@@ -212,8 +210,10 @@ const Account: NextPage = () => {
               // @ts-expect-error
               user={session.data.user}
               logout={async () => {
-                await Promise.all([signOut(), auth.signOut()]);
-                router.push("/");
+                await Promise.all([
+                  signOut({ callbackUrl: "/" }),
+                  auth.signOut(),
+                ]);
               }}
             />
             <ItemDetail items={data?.users[0]?.user_items ?? []} />

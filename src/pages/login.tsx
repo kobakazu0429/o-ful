@@ -11,26 +11,36 @@ import {
 import type { AuthProvider } from "firebase/auth";
 import { firebaseApp } from "../lib/firebase";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
-import { Heading, Text, Flex, Stack, Box } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { useCheckAlreadyLogin } from "../auth/user";
+import {
+  Heading,
+  Text,
+  Flex,
+  Stack,
+  Box,
+  Spinner,
+  Center,
+} from "@chakra-ui/react";
+import { useEffect, useMemo } from "react";
+
+const REDIRECTED_HASH = "redirected";
 
 const Login: NextPage = () => {
   const router = useRouter();
+  const isRedirected = useMemo(() => {
+    return router.asPath.split("#")[1] === REDIRECTED_HASH;
+  }, [router]);
+
   const auth = getAuth(firebaseApp);
   const twitterProvider = new TwitterAuthProvider();
 
   const handleOAuthLogin = (provider: AuthProvider) => {
+    router.push({ hash: REDIRECTED_HASH }, undefined, { shallow: true });
     signInWithRedirect(auth, provider).catch((error) => console.error(error));
   };
 
-  useCheckAlreadyLogin({
-    successHandle: () => {
-      router.push("/");
-    },
-  });
-
   useEffect(() => {
+    if (!isRedirected) return;
+
     (async () => {
       const credential = await getRedirectResult(auth);
       if (!credential) return;
@@ -42,10 +52,44 @@ const Login: NextPage = () => {
 
       // ID トークンを NextAuth に渡す
       const idToken = await credential.user.getIdToken(true);
-      await signIn("credentials", { idToken, twitterId });
+      await signIn("credentials", { idToken, twitterId, callbackUrl: "/" });
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isRedirected) {
+    return (
+      <WithHeaderFooter>
+        <Flex align={"center"} justify={"center"}>
+          <Stack
+            spacing={8}
+            mx={"auto"}
+            maxW={"lg"}
+            py={12}
+            px={6}
+            align={"center"}
+            textAlign={"center"}
+          >
+            <Box>
+              <Heading as="h1" display="inline-block" fontSize={"4xl"}>
+                ログイン中です
+              </Heading>
+            </Box>
+
+            <Center>
+              <Spinner
+                thickness="4px"
+                speed="1s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+              />
+            </Center>
+          </Stack>
+        </Flex>
+      </WithHeaderFooter>
+    );
+  }
 
   return (
     <WithHeaderFooter>
