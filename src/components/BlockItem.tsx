@@ -7,6 +7,7 @@ import {
   Heading,
   WrapItem,
 } from "@chakra-ui/react";
+import { formatPrice } from "../utils/price";
 
 interface Props {
   coverImageUrl: string;
@@ -60,7 +61,7 @@ export const BlockItem: VFC<Props> = ({ coverImageUrl, name, price }) => {
             <Text as="span" color={"gray.600"} fontSize="md">
               &yen;{" "}
             </Text>
-            {price}
+            {formatPrice(price)}
           </Text>
         </Box>
       </Box>
