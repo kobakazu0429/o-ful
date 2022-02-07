@@ -207,8 +207,8 @@ const Create: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [insertItemMutationData, insertItemMutationError, uploadStart]);
 
-  if (!isLogin) {
-    return <WithHeaderFooter>使い方</WithHeaderFooter>;
+  if (!isLogin || !userIdByUidQueryData?.users[0].id) {
+    return <WithHeaderFooter>出品は許可されていません</WithHeaderFooter>;
   }
 
   return (

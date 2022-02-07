@@ -104,11 +104,8 @@ const Item: NextPage = () => {
                 {data?.items_by_pk?.name}
               </Heading>
               <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-                出品者: {data?.items_by_pk?.user_item?.user.nickname} さん
-              </Text>
-              <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-                出品者:{" "}
-                {data?.items_by_pk?.user_item?.user.user_sns_id?.twitter_id}{" "}
+                出品者: {data?.items_by_pk?.user_item?.user.nickname} (@
+                {data?.items_by_pk?.user_item?.user.user_sns_id?.twitter_id})
                 さん
               </Text>
               <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
@@ -185,6 +182,10 @@ const Item: NextPage = () => {
                 transform: "translateY(2px)",
                 boxShadow: "lg",
               }}
+              as="a"
+              href={`https://twitter.com/${data?.items_by_pk?.user_item?.user.user_sns_id?.twitter_id}`}
+              rel="noreferrer noopener"
+              target="_blank"
             >
               出品者と詳しく話す
             </Button>
