@@ -216,10 +216,7 @@ const Account: NextPage = () => {
                 router.push("/");
               }}
             />
-            <ItemDetail
-              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-              items={data?.users[0].user_items!}
-            />
+            <ItemDetail items={data?.users[0]?.user_items ?? []} />
           </Stack>
         )}
       </WithLoading>
