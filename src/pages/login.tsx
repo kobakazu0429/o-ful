@@ -35,7 +35,7 @@ const Login: NextPage = () => {
   const twitterProvider = new TwitterAuthProvider();
 
   const handleOAuthLogin = (provider: AuthProvider) => {
-    router.push({ hash: REDIRECTED_HASH }, undefined, { shallow: true });
+    router.replace({ hash: REDIRECTED_HASH }, undefined, { shallow: true });
     signInWithRedirect(auth, provider).catch((error) => console.error(error));
   };
 
