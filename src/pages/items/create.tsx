@@ -362,7 +362,7 @@ const Create: NextPage = () => {
                   type="submit"
                   disabled={Object.keys(errors).length !== 0 || isSubmitting}
                 >
-                  投稿する
+                  出品する
                 </Button>
               </ButtonGroup>
             </form>
