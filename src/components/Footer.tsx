@@ -21,9 +21,7 @@ export const Footer: VFC = () => {
           </Stack>
 
           <Stack align={"flex-start"}>
-            <Link href="/">Help Center</Link>
-            <Link href="/">Safety Center</Link>
-            <Link href="/">Community Guidelines</Link>
+            <Link href="/inhibition">出品物ガイドライン</Link>
           </Stack>
 
           <Stack align={"flex-start"}>
