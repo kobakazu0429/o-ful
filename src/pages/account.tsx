@@ -190,28 +190,29 @@ const Account: NextPage = () => {
   return (
     <WithHeaderFooter>
       <WithLoading
-        loading={session.status === "loading" || loading}
-        error={error}
+        loading={loading || session?.status === "loading"}
+        error={
+          error ||
+          (session?.status !== "loading" && session?.status !== "authenticated")
+        }
       >
-        {session?.status === "authenticated" && (
-          <Stack
-            direction={{ base: "column", xl: "row" }}
-            spacing={{ base: 10 }}
-            justifyContent={"center"}
-          >
-            <UserDetail
-              // @ts-expect-error
-              user={session.data.user}
-              logout={async () => {
-                await Promise.all([
-                  signOut({ callbackUrl: "/" }),
-                  auth.signOut(),
-                ]);
-              }}
-            />
-            <ItemDetail items={data?.users[0]?.user_items ?? []} />
-          </Stack>
-        )}
+        <Stack
+          direction={{ base: "column", xl: "row" }}
+          spacing={{ base: 10 }}
+          justifyContent={"center"}
+        >
+          <UserDetail
+            // @ts-expect-error
+            user={session.data.user}
+            logout={async () => {
+              await Promise.all([
+                signOut({ callbackUrl: "/" }),
+                auth.signOut(),
+              ]);
+            }}
+          />
+          <ItemDetail items={data?.users[0]?.user_items ?? []} />
+        </Stack>
       </WithLoading>
     </WithHeaderFooter>
   );

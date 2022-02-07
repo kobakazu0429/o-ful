@@ -7,11 +7,13 @@ export const WithLoading: FC<{ loading: any; error?: any }> = ({
   loading,
   error = false,
 }) => {
-  return loading ? (
-    <Spinner />
-  ) : error ? (
-    <Text>エラーが発生しました。ページを更新してください。</Text>
-  ) : (
-    <>{children}</>
-  );
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return <Text>エラーが発生しました。ページを更新してください。</Text>;
+  }
+
+  return <>{children}</>;
 };
