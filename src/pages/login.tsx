@@ -11,16 +11,9 @@ import {
 import type { AuthProvider } from "firebase/auth";
 import { firebaseApp } from "../lib/firebase";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
-import {
-  Heading,
-  Text,
-  Flex,
-  Stack,
-  Box,
-  Spinner,
-  Center,
-} from "@chakra-ui/react";
+import { Heading, Text, Flex, Stack, Box } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
+import { Spinner } from "../components/Spinner";
 
 const REDIRECTED_HASH = "redirected";
 
@@ -75,16 +68,7 @@ const Login: NextPage = () => {
                 ログイン中です
               </Heading>
             </Box>
-
-            <Center>
-              <Spinner
-                thickness="4px"
-                speed="1s"
-                emptyColor="gray.200"
-                color="blue.500"
-                size="xl"
-              />
-            </Center>
+            <Spinner />
           </Stack>
         </Flex>
       </WithHeaderFooter>

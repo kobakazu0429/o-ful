@@ -1,5 +1,6 @@
 import type { FC } from "react";
-import { Text, Spinner, Center } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
+import { Spinner } from "./Spinner";
 
 export const WithLoading: FC<{ loading: any; error?: any }> = ({
   children,
@@ -7,15 +8,7 @@ export const WithLoading: FC<{ loading: any; error?: any }> = ({
   error = false,
 }) => {
   return loading ? (
-    <Center>
-      <Spinner
-        thickness="4px"
-        speed="1s"
-        emptyColor="gray.200"
-        color="blue.500"
-        size="xl"
-      />
-    </Center>
+    <Spinner />
   ) : error ? (
     <Text>エラーが発生しました。ページを更新してください。</Text>
   ) : (
