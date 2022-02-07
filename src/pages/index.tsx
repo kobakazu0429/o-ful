@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Link from "next/link";
-import { Wrap, Heading } from "@chakra-ui/react";
+import { Wrap, Heading, Flex } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import { Header } from "../components/Header";
 import { BlockItem } from "../components/BlockItem";
@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   const { data, loading, error } = useQuery<RecentItemsQuery>(ITEMS_QUERY);
 
   return (
-    <>
+    <Flex direction={"column"} height="100%">
       <Header />
       <Hero />
       <Heading size="lg" p={10}>
@@ -34,6 +34,7 @@ const Home: NextPage = () => {
       </Heading>
 
       <Wrap
+        flex="1"
         mb={8}
         marginX="auto"
         spacing={{
@@ -65,7 +66,7 @@ const Home: NextPage = () => {
         </WithLoading>
       </Wrap>
       <Footer />
-    </>
+    </Flex>
   );
 };
 
