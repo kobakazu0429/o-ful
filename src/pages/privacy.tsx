@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { ListItem, UnorderedList, Text } from "@chakra-ui/react";
-import { TextPageLayout, Content } from "../../layouts/TextPage";
+import { TextPageLayout, Content } from "../layouts/TextPage";
 
 const Privacy: NextPage = () => {
   return (

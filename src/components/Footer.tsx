@@ -15,9 +15,9 @@ export const Footer: VFC = () => {
       <Container as={Stack} maxW={"6xl"} py={10}>
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
           <Stack align={"flex-start"}>
-            <Link href="/">o-fulってなに？</Link>
-            <Link href="/">使い方</Link>
-            <Link href="/">お問い合わせ</Link>
+            <Link href="/about">o-fulってなに？</Link>
+            <Link href="/guide">使い方</Link>
+            <Link href="/contact">お問い合わせ</Link>
           </Stack>
 
           <Stack align={"flex-start"}>
@@ -27,10 +27,9 @@ export const Footer: VFC = () => {
           </Stack>
 
           <Stack align={"flex-start"}>
-            <Link href="/">Cookieポリシー</Link>
-            <Link href="/">プライバシーポリシー</Link>
-            <Link href="/">特定商取引に関する表記</Link>
-            <Link href="/">利用規約</Link>
+            <Link href="/teams">利用規約</Link>
+            <Link href="/privacy">プライバシーポリシー</Link>
+            <Link href="/tokushoho">特定商取引に関する表記</Link>
           </Stack>
         </SimpleGrid>
       </Container>

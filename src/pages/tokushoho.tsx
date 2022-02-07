@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { TextPageLayout, Content } from "../../layouts/TextPage";
+import { TextPageLayout, Content } from "../layouts/TextPage";
 
 const Tokushoho: NextPage = () => {
   return (

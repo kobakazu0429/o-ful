@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
@@ -11,7 +12,14 @@ import {
 import type { AuthProvider } from "firebase/auth";
 import { firebaseApp } from "../lib/firebase";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
-import { Heading, Text, Flex, Stack, Box } from "@chakra-ui/react";
+import {
+  Heading,
+  Text,
+  Flex,
+  Stack,
+  Box,
+  Link as ChakraLink,
+} from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
 import { Spinner } from "../components/Spinner";
 
@@ -116,7 +124,14 @@ const Login: NextPage = () => {
               登録またはログインすることで、
             </Text>
             <Text as="span" display="inline-block">
-              [利用規約]と[プライバシーポリシー]に同意したものとみなされます。
+              <Link href="/teams" passHref>
+                <ChakraLink color="blue.600">[利用規約]</ChakraLink>
+              </Link>
+              と
+              <Link href="/privacy" passHref>
+                <ChakraLink color="blue.600">[プライバシーポリシー]</ChakraLink>
+              </Link>
+              に同意したものとみなされます。
             </Text>
           </Text>
         </Stack>

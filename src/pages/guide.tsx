@@ -1,8 +1,12 @@
 import type { NextPage } from "next";
-import { TextPageLayout } from "../layouts/TextPage";
+import { TextPageLayout, Content } from "../layouts/TextPage";
 
 const Guide: NextPage = () => {
-  return <TextPageLayout title="使い方">使い方ページ</TextPageLayout>;
+  return (
+    <TextPageLayout title="使い方">
+      <Content title="">使い方ページです</Content>
+    </TextPageLayout>
+  );
 };
 
 export default Guide;
