@@ -2098,7 +2098,7 @@
     eslint-plugin-prettier "4.0.0"
     prettier "2.5.1"
 
-"@kobakazu0429/eslint-config-typescript-react@^3.0.3":
+"@kobakazu0429/eslint-config-typescript-react@3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@kobakazu0429/eslint-config-typescript-react/-/eslint-config-typescript-react-3.0.3.tgz#fb1142fc8fe2a91cd6f56b8b76b211773cf6ac90"
   integrity sha512-nC8SeDsSyj94PWX4piyH++t/nOK6FH9K+O+R4LKM1crZOWM9hY8YNG0U6xOMJCGpeOfhyUvpnQmLyidPhZwVsw==
@@ -2400,7 +2400,7 @@
     "@sentry/types" "6.17.5"
     tslib "^1.9.3"
 
-"@sentry/nextjs@^6.17.5":
+"@sentry/nextjs@6.17.5":
   version "6.17.5"
   resolved "https://registry.yarnpkg.com/@sentry/nextjs/-/nextjs-6.17.5.tgz#5c9460f12e0de746f5e6df70e76e6c4d20a9f2d0"
   integrity sha512-4iItvsgfGvEqy94suOtR9zM9C3JgiWck9STsbJ10YRcw7mz1NRFjoXBWigPrLYqjTTVmA3tsBcKXysubRu0c9g==
