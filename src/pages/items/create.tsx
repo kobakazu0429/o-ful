@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { NextPage } from "next";
+import Link from "next/Link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Heading,
@@ -14,6 +15,7 @@ import {
   Select,
   ButtonGroup,
   useToast,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { CUIAutoComplete } from "chakra-ui-autocomplete";
 import type { Item as AutocompleteItem } from "chakra-ui-autocomplete";
@@ -218,21 +220,35 @@ const Create: NextPage = () => {
         error={tagsQueryError || userIdByUidQueryError}
       >
         <Flex align={"center"} justify={"center"}>
-          <Stack
-            spacing={8}
-            mx={"auto"}
-            maxW={"lg"}
-            py={12}
-            px={6}
-            align={"center"}
-            textAlign={"center"}
-          >
-            <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack
+              spacing={8}
+              mx={"auto"}
+              maxW={"lg"}
+              py={12}
+              px={6}
+              align={"center"}
+              textAlign={"center"}
+            >
               <Heading fontSize={"4xl"}>
                 <Text as="h1" display="inline-block">
                   出品登録フォーム
                 </Text>
               </Heading>
+              <Text>
+                <Link href="/teams" passHref>
+                  <ChakraLink color="blue.600" fontWeight={"bold"}>
+                    利用規約
+                  </ChakraLink>
+                </Link>
+                と
+                <Link href="/inhibition" passHref>
+                  <ChakraLink color="blue.600" fontWeight={"bold"}>
+                    出品物ガイドライン
+                  </ChakraLink>
+                </Link>
+                を遵守してください。
+              </Text>
               <Text>
                 iPhoneのSafariでは画像が正しくアップロードできません。
               </Text>
@@ -365,15 +381,15 @@ const Create: NextPage = () => {
                   出品する
                 </Button>
               </ButtonGroup>
-            </form>
-            {errors && (
-              <ul className="text-left mt-12">
-                {Object.entries(errors).map(([k, v]) => (
-                  <li key={k}>{v.message}</li>
-                ))}
-              </ul>
-            )}
-          </Stack>
+              {errors && (
+                <ul className="text-left mt-12">
+                  {Object.entries(errors).map(([k, v]) => (
+                    <li key={k}>{v.message}</li>
+                  ))}
+                </ul>
+              )}
+            </Stack>
+          </form>
         </Flex>
       </WithLoading>
     </WithHeaderFooter>
