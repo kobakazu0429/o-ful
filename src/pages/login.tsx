@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -8,10 +9,9 @@ import {
   signInWithRedirect,
   TwitterAuthProvider,
   getRedirectResult,
+  getAdditionalUserInfo,
 } from "firebase/auth";
-import type { AuthProvider } from "firebase/auth";
-import { firebaseApp } from "../lib/firebase";
-import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
+import { gql, useMutation } from "@apollo/client";
 import {
   Heading,
   Text,
@@ -19,17 +19,54 @@ import {
   Stack,
   Box,
   Link as ChakraLink,
+  useToast,
 } from "@chakra-ui/react";
-import { useEffect, useMemo } from "react";
+import type { AuthProvider } from "firebase/auth";
+import { firebaseApp } from "../lib/firebase";
+import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
 import { Spinner } from "../components/Spinner";
+import {
+  InsertNewUserMutation,
+  InsertNewUserMutationVariables,
+} from "../generated/graphql";
 
 const REDIRECTED_HASH = "redirected";
 
+const INSERT_NEW_USER = gql`
+  mutation InsertNewUser(
+    $uid: String!
+    $nickname: String!
+    $twitter_id: String!
+    $email: String!
+  ) {
+    insert_users_one(
+      object: {
+        uid: $uid
+        nickname: $nickname
+        twitter_id: $twitter_id
+        email: $email
+      }
+      on_conflict: {
+        constraint: users_uid_key
+        update_columns: [nickname, twitter_id, email]
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 const Login: NextPage = () => {
+  const toast = useToast();
   const router = useRouter();
   const isRedirected = useMemo(() => {
     return router.asPath.split("#")[1] === REDIRECTED_HASH;
   }, [router]);
+
+  const [insertNewUser, { error }] = useMutation<
+    InsertNewUserMutation,
+    InsertNewUserMutationVariables
+  >(INSERT_NEW_USER);
 
   const auth = getAuth(firebaseApp);
   const twitterProvider = new TwitterAuthProvider();
@@ -42,19 +79,56 @@ const Login: NextPage = () => {
   useEffect(() => {
     if (!isRedirected) return;
 
-    (async () => {
-      const credential = await getRedirectResult(auth);
-      if (!credential) return;
+    try {
+      (async () => {
+        const credential = await getRedirectResult(auth);
+        if (!credential) throw new Error("credential is not exist");
+        const uid = credential.user.uid;
 
-      const twitterId = JSON.parse(
-        // @ts-expect-error
-        credential._tokenResponse.rawUserInfo
-      ).screen_name;
+        const additionalUserInfo = getAdditionalUserInfo(credential);
+        if (!additionalUserInfo)
+          throw new Error("additionalUserInfo is not exist");
 
-      // ID トークンを NextAuth に渡す
-      const idToken = await credential.user.getIdToken(true);
-      await signIn("credentials", { idToken, twitterId, callbackUrl: "/" });
-    })();
+        const { profile } = additionalUserInfo;
+        if (!profile) throw new Error("profile is not exist");
+
+        const { screen_name, name, email } = profile as {
+          screen_name: string;
+          name: string;
+          email: string;
+        };
+
+        if (error) {
+          throw error;
+        }
+
+        await insertNewUser({
+          variables: {
+            uid,
+            nickname: name,
+            twitter_id: screen_name,
+            email,
+          },
+        });
+
+        // ID トークンを NextAuth に渡す
+        const idToken = await credential.user.getIdToken(true);
+        await signIn("credentials", {
+          idToken,
+          twitterId: screen_name,
+          callbackUrl: "/",
+        });
+      })();
+    } catch (error) {
+      toast({
+        title: "アカウント作成に失敗しました。",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+        position: "top-right",
+      });
+      console.error(error);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
