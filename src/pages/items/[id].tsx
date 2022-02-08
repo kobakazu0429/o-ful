@@ -49,9 +49,7 @@ export const ITEM_QUERY = gql`
       user_item {
         user {
           nickname
-          user_sns_id {
-            twitter_id
-          }
+          twitter_id
         }
       }
     }
@@ -105,8 +103,7 @@ const Item: NextPage = () => {
               </Heading>
               <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
                 出品者: {data?.items_by_pk?.user_item?.user.nickname} (@
-                {data?.items_by_pk?.user_item?.user.user_sns_id?.twitter_id})
-                さん
+                {data?.items_by_pk?.user_item?.user.twitter_id}) さん
               </Text>
               <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
                 参考価格: {formatPrice(data?.items_by_pk?.price)}
@@ -183,7 +180,7 @@ const Item: NextPage = () => {
                 boxShadow: "lg",
               }}
               as="a"
-              href={`https://twitter.com/${data?.items_by_pk?.user_item?.user.user_sns_id?.twitter_id}`}
+              href={`https://twitter.com/${data?.items_by_pk?.user_item?.user.twitter_id}`}
               rel="noreferrer noopener"
               target="_blank"
             >
