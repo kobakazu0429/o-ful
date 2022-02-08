@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import type { VFC } from "react";
-import Link from "next/Link";
+import Link from "next/link";
 import { gql, useQuery } from "@apollo/client";
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import {
