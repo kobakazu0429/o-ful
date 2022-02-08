@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { Text, ListItem, UnorderedList } from "@chakra-ui/react";
+import { ListItem, UnorderedList } from "@chakra-ui/react";
 import { TextPageLayout, Content } from "../layouts/TextPage";
 
 const Teams: NextPage = () => {
