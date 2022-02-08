@@ -38,3 +38,7 @@ yarn-error.log*
 
 graphql.schema.json
 src/generated
+
+# Sentry
+.sentryclirc
+sentry.properties
