@@ -162,8 +162,7 @@ const ItemDetail: VFC<{
     onOpen: () => void;
     onClose: () => void;
   };
-  refetch: () => void;
-}> = ({ items, modal, refetch }) => {
+}> = ({ items, modal }) => {
   const [editIitem, setEditItem] = useState<InputsWithId>();
 
   return (
@@ -189,7 +188,6 @@ const ItemDetail: VFC<{
                       item={item}
                       openEditModal={modal.onOpen}
                       setEditItem={setEditItem}
-                      refetch={refetch}
                     />
                   )
               )}
@@ -206,19 +204,17 @@ const CartItem: VFC<{
   item: Items[number]["item"];
   openEditModal: () => void;
   setEditItem: (item: InputsWithId) => void;
-  refetch: () => void;
 }> = ({
   item: { id, name, description, price, item_images, state, condition },
   openEditModal,
   setEditItem,
-  refetch,
 }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [deleteItem, { error }] = useMutation<
     SoftDeleteItemByIdMutation,
     SoftDeleteItemByIdMutationVariables
-  >(DELETE_ITEM);
+  >(DELETE_ITEM, { refetchQueries: ["UserItemsByUid"] });
 
   return (
     <>
@@ -344,7 +340,6 @@ const CartItem: VFC<{
                     }
 
                     onClose();
-                    refetch();
                   }}
                 >
                   削除する
@@ -375,7 +370,7 @@ const EditItemModal: VFC<{
   const [updateItem, { error: updateItemMutationError }] = useMutation<
     UpdateItemMutation,
     UpdateItemMutationVariables
-  >(UPDATE_ITEM);
+  >(UPDATE_ITEM, { refetchQueries: ["UserItemsByUid"] });
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async (data) => {
@@ -526,7 +521,7 @@ const Account: NextPage = () => {
   const auth = getAuth(firebaseApp);
   const uid = auth.currentUser?.uid ?? session.data?.user?.uid ?? "";
 
-  const { data, error, loading, refetch } = useQuery<
+  const { data, error, loading } = useQuery<
     UserItemsByUidQuery,
     UserItemsByUidQueryVariables
   >(USER_ITEMS_QUERY, { variables: { uid } });
@@ -567,7 +562,6 @@ const Account: NextPage = () => {
           <ItemDetail
             items={data?.users[0]?.user_items ?? []}
             modal={{ isOpen, onOpen, onClose }}
-            refetch={refetch}
           />
         </Stack>
       </WithLoading>
