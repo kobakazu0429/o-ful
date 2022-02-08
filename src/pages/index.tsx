@@ -11,7 +11,7 @@ import { RecentItemsQuery } from "../generated/graphql";
 
 const ITEMS_QUERY = gql`
   query RecentItems {
-    items(order_by: { updated_at: asc }) {
+    items(where: { state: { _eq: 10 } }, order_by: { updated_at: desc }) {
       id
       name
       price
