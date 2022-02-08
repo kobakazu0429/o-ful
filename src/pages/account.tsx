@@ -27,6 +27,8 @@ import { useCallback, useState, VFC } from "react";
 import type { DeepNonNullable } from "utility-types";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
+  SoftDeleteItemByIdMutation,
+  SoftDeleteItemByIdMutationVariables,
   UpdateItemMutation,
   UpdateItemMutationVariables,
   UserItemsByUidQuery,
@@ -40,6 +42,7 @@ import { RegisterItem } from "../components/RegisterItem";
 import type { Inputs } from "../components/RegisterItem";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
+import { TIMESTAMPTZ_NOW } from "../db/hasuraSetVariable";
 
 type InputsWithId = Omit<Inputs, "images"> & { id: number };
 
@@ -89,6 +92,17 @@ const UPDATE_ITEM = gql`
         state: $state
         updated_at: $updated_at
       }
+      pk_columns: { id: $id }
+    ) {
+      id
+    }
+  }
+`;
+
+const DELETE_ITEM = gql`
+  mutation SoftDeleteItemById($id: Int!, $updated_at: timestamptz!) {
+    update_items_by_pk(
+      _set: { state: 90, updated_at: $updated_at }
       pk_columns: { id: $id }
     ) {
       id
@@ -148,7 +162,8 @@ const ItemDetail: VFC<{
     onOpen: () => void;
     onClose: () => void;
   };
-}> = ({ items, modal }) => {
+  refetch: () => void;
+}> = ({ items, modal, refetch }) => {
   const [editIitem, setEditItem] = useState<InputsWithId>();
 
   return (
@@ -166,14 +181,18 @@ const ItemDetail: VFC<{
         <Box bg="white" borderWidth="1px" rounded="lg">
           <Box mx="auto" p="6">
             <Stack spacing={8}>
-              {items.map(({ item }) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  onOpen={modal.onOpen}
-                  setEditItem={setEditItem}
-                />
-              ))}
+              {items.map(
+                ({ item }) =>
+                  item && (
+                    <CartItem
+                      key={item.id}
+                      item={item}
+                      openEditModal={modal.onOpen}
+                      setEditItem={setEditItem}
+                      refetch={refetch}
+                    />
+                  )
+              )}
             </Stack>
           </Box>
         </Box>
@@ -185,79 +204,157 @@ const ItemDetail: VFC<{
 
 const CartItem: VFC<{
   item: Items[number]["item"];
-  onOpen: () => void;
+  openEditModal: () => void;
   setEditItem: (item: InputsWithId) => void;
+  refetch: () => void;
 }> = ({
   item: { id, name, description, price, item_images, state, condition },
-  onOpen,
+  openEditModal,
   setEditItem,
+  refetch,
 }) => {
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [deleteItem, { error }] = useMutation<
+    SoftDeleteItemByIdMutation,
+    SoftDeleteItemByIdMutationVariables
+  >(DELETE_ITEM);
+
   return (
-    <Flex
-      direction={{ base: "column", md: "row" }}
-      justify="space-between"
-      align={{ base: "left-start", lg: "center" }}
-      width="full"
-    >
-      <Stack direction="row" spacing="5" overflow={"hidden"} width="full">
-        <Image
-          rounded="lg"
-          width="120px"
-          height="120px"
-          fit="cover"
-          src={item_images[0].url}
-          alt={name}
-          draggable="false"
-          loading="lazy"
-        />
-        <Box pt="4" flex="1" isTruncated width="full">
-          <Stack spacing="0.5">
-            <Text fontWeight="medium" noOfLines={1}>
-              {name}
-            </Text>
-
-            <Box>
-              <Text color={"gray.600"} fontSize="sm" noOfLines={1}>
-                {description}
+    <>
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        justify="space-between"
+        align={{ base: "left-start", lg: "center" }}
+        width="full"
+      >
+        <Stack direction="row" spacing="5" overflow={"hidden"} width="full">
+          <Image
+            rounded="lg"
+            width="120px"
+            height="120px"
+            fit="cover"
+            src={item_images[0].url}
+            alt={name}
+            draggable="false"
+            loading="lazy"
+          />
+          <Box pt="4" flex="1" isTruncated width="full">
+            <Stack spacing="0.5">
+              <Text fontWeight="medium" noOfLines={1}>
+                {name}
               </Text>
-            </Box>
 
-            <HStack spacing="1">
-              <Text as="span" color="gray.700">
-                {formatPrice(price)}
-              </Text>
-            </HStack>
+              <Box>
+                <Text color={"gray.600"} fontSize="sm" noOfLines={1}>
+                  {description}
+                </Text>
+              </Box>
 
-            <Text>{convertState(state)}</Text>
-            <Flex width="full" justifyContent="flex-end">
-              <ButtonGroup>
-                {/* <Button colorScheme="red" width="150px" onClick={() => {}}>
-                  削除する
-                </Button> */}
+              <HStack spacing="1">
+                <Text as="span" color="gray.700">
+                  {formatPrice(price)}
+                </Text>
+              </HStack>
+
+              <Text>{convertState(state)}</Text>
+              <Flex width="full" justifyContent="flex-end">
+                <ButtonGroup>
+                  <Button colorScheme="red" width="150px" onClick={onOpen}>
+                    削除する
+                  </Button>
+                  <Button
+                    colorScheme="blue"
+                    variant="outline"
+                    width="150px"
+                    onClick={() => {
+                      setEditItem({
+                        id,
+                        name,
+                        description: description ?? "",
+                        price,
+                        condition,
+                        state,
+                      });
+                      openEditModal();
+                    }}
+                  >
+                    編集する
+                  </Button>
+                </ButtonGroup>
+              </Flex>
+            </Stack>
+          </Box>
+        </Stack>
+      </Flex>
+      <Modal
+        onClose={onClose}
+        isOpen={isOpen}
+        isCentered
+        scrollBehavior="inside"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>削除</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex align={"center"} justify={"center"} direction="column">
+              <Text>「{name}」</Text>
+              <Text>本当に削除してよろしいですか？</Text>
+
+              <ButtonGroup spacing={6} mt={6}>
                 <Button
-                  colorScheme="blue"
-                  variant="outline"
-                  width="150px"
-                  onClick={() => {
-                    setEditItem({
-                      id,
-                      name,
-                      description: description ?? "",
-                      price,
-                      condition,
-                      state,
+                  bg={"blue.400"}
+                  color={"white"}
+                  w="full"
+                  _hover={{
+                    bg: "blue.500",
+                  }}
+                  onClick={onClose}
+                >
+                  キャンセル
+                </Button>
+                <Button
+                  bg={"red.400"}
+                  color={"white"}
+                  w="full"
+                  _hover={{
+                    bg: "red.500",
+                  }}
+                  onClick={async () => {
+                    await deleteItem({
+                      variables: {
+                        id,
+                        updated_at: TIMESTAMPTZ_NOW,
+                      },
                     });
-                    onOpen();
+
+                    if (error) {
+                      toast({
+                        title: "削除に失敗しました。",
+                        description:
+                          "時間をおいて再度試してください。改善されない場合は運営者までご報告ください。",
+                        status: "error",
+                        duration: 9000,
+                        isClosable: true,
+                        position: "top-right",
+                      });
+
+                      throw error;
+                    }
+
+                    onClose();
+                    refetch();
                   }}
                 >
-                  編集する
+                  削除する
                 </Button>
               </ButtonGroup>
             </Flex>
-          </Stack>
-        </Box>
-      </Stack>
-    </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 
@@ -306,7 +403,7 @@ const EditItemModal: VFC<{
           price: data.price,
           condition: data.condition,
           state: data.state,
-          updated_at: new Date().toISOString(),
+          updated_at: TIMESTAMPTZ_NOW,
 
           // item_images: {
           //   data: uploadedFiles.map((i) => ({ url: i.secure_url })),
@@ -358,7 +455,11 @@ const EditItemModal: VFC<{
         <ModalHeader>商品編集</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Flex align={"center"} justify={"center"}>
+          <Flex align={"center"} justify={"center"} direction="column">
+            <Text>タグと写真は現在編集できません。</Text>
+            <Text>
+              変更したい場合はお手数ですが、商品を削除し、再度登録してください
+            </Text>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack
                 spacing={8}
@@ -373,7 +474,7 @@ const EditItemModal: VFC<{
                   register={register}
                   setValue={setValue}
                   showState
-                  showTags={false}
+                  showTags
                   showImages={false}
                   defaultValues={item}
                 />
@@ -425,7 +526,7 @@ const Account: NextPage = () => {
   const auth = getAuth(firebaseApp);
   const uid = auth.currentUser?.uid ?? session.data?.user?.uid ?? "";
 
-  const { data, error, loading } = useQuery<
+  const { data, error, loading, refetch } = useQuery<
     UserItemsByUidQuery,
     UserItemsByUidQueryVariables
   >(USER_ITEMS_QUERY, { variables: { uid } });
@@ -466,6 +567,7 @@ const Account: NextPage = () => {
           <ItemDetail
             items={data?.users[0]?.user_items ?? []}
             modal={{ isOpen, onOpen, onClose }}
+            refetch={refetch}
           />
         </Stack>
       </WithLoading>

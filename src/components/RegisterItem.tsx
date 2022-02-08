@@ -44,7 +44,7 @@ export const RegisterItem: VFC<{
   showState?: boolean;
   showTags?: boolean;
   showImages?: boolean;
-  defaultValues?: Omit<Inputs, "images">;
+  defaultValues?: Omit<Inputs, "images" | "tags">;
 }> = ({
   register,
   setValue,

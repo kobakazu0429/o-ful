@@ -11,6 +11,9 @@ export const convertState = (state: number) => {
     case 20:
       return stateMap[state];
 
+    case 90:
+      throw new Error("user got deleted item");
+
     default:
       return "不明";
   }
