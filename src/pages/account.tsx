@@ -10,14 +10,25 @@ import {
   VStack,
   Stack,
   Button,
+  ButtonGroup,
   Flex,
   HStack,
   Image,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalContent,
+  ModalCloseButton,
+  ModalBody,
+  useToast,
 } from "@chakra-ui/react";
-import type { VFC } from "react";
+import { useCallback, useState, VFC } from "react";
 import type { DeepNonNullable } from "utility-types";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
+  UpdateItemMutation,
+  UpdateItemMutationVariables,
   UserItemsByUidQuery,
   UserItemsByUidQueryResult,
   UserItemsByUidQueryVariables,
@@ -25,6 +36,12 @@ import {
 import { convertState } from "../db/itemState";
 import { WithLoading } from "../components/Loading";
 import { formatPrice } from "../utils/price";
+import { RegisterItem } from "../components/RegisterItem";
+import type { Inputs } from "../components/RegisterItem";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+
+type InputsWithId = Omit<Inputs, "images"> & { id: number };
 
 const USER_ITEMS_QUERY = gql`
   query UserItemsByUid($uid: String!) {
@@ -35,6 +52,7 @@ const USER_ITEMS_QUERY = gql`
           name
           price
           state
+          condition
           description
           item_tags {
             tag {
@@ -48,6 +66,32 @@ const USER_ITEMS_QUERY = gql`
           }
         }
       }
+    }
+  }
+`;
+
+const UPDATE_ITEM = gql`
+  mutation UpdateItem(
+    $id: Int!
+    $name: String!
+    $description: String!
+    $price: Int!
+    $condition: Int!
+    $state: Int!
+    $updated_at: timestamptz!
+  ) {
+    update_items_by_pk(
+      _set: {
+        name: $name
+        description: $description
+        price: $price
+        condition: $condition
+        state: $state
+        updated_at: $updated_at
+      }
+      pk_columns: { id: $id }
+    ) {
+      id
     }
   }
 `;
@@ -99,41 +143,63 @@ type Items = NonNullable<
 
 const ItemDetail: VFC<{
   items: Items;
-}> = ({ items }) => {
+  modal: {
+    isOpen: boolean;
+    onOpen: () => void;
+    onClose: () => void;
+  };
+}> = ({ items, modal }) => {
+  const [editIitem, setEditItem] = useState<InputsWithId>();
+
   return (
-    <VStack
-      spacing={4}
-      align="stretch"
-      width="full"
-      maxWidth={"full"}
-      overflow={"hidden"}
-    >
-      <Heading as="h2" fontSize={"3xl"}>
-        出品情報
-      </Heading>
-      <Box bg="white" borderWidth="1px" rounded="lg">
-        <Box mx="auto" p="6">
-          <Stack spacing={8}>
-            {items.map(({ item }) => (
-              <CartItem key={item.id} item={item} />
-            ))}
-          </Stack>
+    <>
+      <VStack
+        spacing={4}
+        align="stretch"
+        width="full"
+        maxWidth={"full"}
+        overflow={"hidden"}
+      >
+        <Heading as="h2" fontSize={"3xl"}>
+          出品情報
+        </Heading>
+        <Box bg="white" borderWidth="1px" rounded="lg">
+          <Box mx="auto" p="6">
+            <Stack spacing={8}>
+              {items.map(({ item }) => (
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  onOpen={modal.onOpen}
+                  setEditItem={setEditItem}
+                />
+              ))}
+            </Stack>
+          </Box>
         </Box>
-      </Box>
-    </VStack>
+      </VStack>
+      <EditItemModal {...modal} item={editIitem} />
+    </>
   );
 };
 
-const CartItem: VFC<{ item: Items[number]["item"] }> = ({
-  item: { name, description, price, item_images, state },
+const CartItem: VFC<{
+  item: Items[number]["item"];
+  onOpen: () => void;
+  setEditItem: (item: InputsWithId) => void;
+}> = ({
+  item: { id, name, description, price, item_images, state, condition },
+  onOpen,
+  setEditItem,
 }) => {
   return (
     <Flex
       direction={{ base: "column", md: "row" }}
       justify="space-between"
       align={{ base: "left-start", lg: "center" }}
+      width="full"
     >
-      <Stack direction="row" spacing="5" overflow={"hidden"}>
+      <Stack direction="row" spacing="5" overflow={"hidden"} width="full">
         <Image
           rounded="lg"
           width="120px"
@@ -144,7 +210,7 @@ const CartItem: VFC<{ item: Items[number]["item"] }> = ({
           draggable="false"
           loading="lazy"
         />
-        <Box pt="4" flex="1" isTruncated>
+        <Box pt="4" flex="1" isTruncated width="full">
           <Stack spacing="0.5">
             <Text fontWeight="medium" noOfLines={1}>
               {name}
@@ -163,10 +229,194 @@ const CartItem: VFC<{ item: Items[number]["item"] }> = ({
             </HStack>
 
             <Text>{convertState(state)}</Text>
+            <Flex width="full" justifyContent="flex-end">
+              <ButtonGroup>
+                {/* <Button colorScheme="red" width="150px" onClick={() => {}}>
+                  削除する
+                </Button> */}
+                <Button
+                  colorScheme="blue"
+                  variant="outline"
+                  width="150px"
+                  onClick={() => {
+                    setEditItem({
+                      id,
+                      name,
+                      description: description ?? "",
+                      price,
+                      condition,
+                      state,
+                    });
+                    onOpen();
+                  }}
+                >
+                  編集する
+                </Button>
+              </ButtonGroup>
+            </Flex>
           </Stack>
         </Box>
       </Stack>
     </Flex>
+  );
+};
+
+const EditItemModal: VFC<{
+  isOpen: boolean;
+  onClose: () => void;
+  item?: InputsWithId;
+}> = ({ isOpen, onClose, item }) => {
+  const toast = useToast();
+
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<Inputs>({ mode: "onChange", criteriaMode: "all" });
+
+  const [updateItem, { error: updateItemMutationError }] = useMutation<
+    UpdateItemMutation,
+    UpdateItemMutationVariables
+  >(UPDATE_ITEM);
+
+  const onSubmit: SubmitHandler<Inputs> = useCallback(
+    async (data) => {
+      // const formData = new FormData();
+      // Array.from(data.images).forEach((file, i) => {
+      //   formData.append(`inputFile${i}`, file);
+      // });
+
+      if (!item?.id) throw new Error("item is is not exist");
+
+      toast({
+        title: "更新を開始しました。",
+        description: "完了するまでページを閉じないでください。",
+        status: "info",
+        duration: 9000,
+        isClosable: true,
+        position: "top-right",
+      });
+
+      const result = await updateItem({
+        variables: {
+          id: item.id,
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          condition: data.condition,
+          state: data.state,
+          updated_at: new Date().toISOString(),
+
+          // item_images: {
+          //   data: uploadedFiles.map((i) => ({ url: i.secure_url })),
+          // },
+          // item_tags: {
+          //   data: data.tags?.map((t) => ({ tag_id: Number(t.value) })) ?? [],
+          // },
+        },
+      });
+      if (updateItemMutationError) {
+        toast({
+          title: "更新に失敗しました。",
+          description:
+            "時間をおいて再度試してください。改善されない場合は運営者までご報告ください。",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+          position: "top-right",
+        });
+
+        throw updateItemMutationError;
+      }
+      console.log(result);
+
+      if (result) {
+        toast({
+          title: "更新に成功しました。",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+          position: "top-right",
+        });
+        onClose();
+      }
+    },
+    [updateItem, item, updateItemMutationError, toast, onClose]
+  );
+
+  return (
+    <Modal
+      onClose={onClose}
+      isOpen={isOpen}
+      isCentered
+      size="xl"
+      scrollBehavior="inside"
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>商品編集</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Flex align={"center"} justify={"center"}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack
+                spacing={8}
+                mx={"auto"}
+                maxW={"lg"}
+                py={12}
+                px={6}
+                align={"center"}
+                textAlign={"center"}
+              >
+                <RegisterItem
+                  register={register}
+                  setValue={setValue}
+                  showState
+                  showTags={false}
+                  showImages={false}
+                  defaultValues={item}
+                />
+
+                <ButtonGroup spacing={6} mt={6}>
+                  <Button
+                    bg={"red.400"}
+                    color={"white"}
+                    w="full"
+                    _hover={{
+                      bg: "red.500",
+                    }}
+                    onClick={onClose}
+                  >
+                    キャンセル
+                  </Button>
+                  <Button
+                    bg={"blue.400"}
+                    color={"white"}
+                    w="full"
+                    _hover={{
+                      bg: "blue.500",
+                    }}
+                    type="submit"
+                    disabled={Object.keys(errors).length !== 0 || isSubmitting}
+                  >
+                    保存する
+                  </Button>
+                </ButtonGroup>
+                {errors && (
+                  <ul className="text-left mt-12">
+                    {Object.entries(errors).map(([k, v]) => {
+                      // @ts-expect-error
+                      return v.message && <li key={k}>{v.message}</li>;
+                    })}
+                  </ul>
+                )}
+              </Stack>
+            </form>
+          </Flex>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };
 
@@ -179,6 +429,8 @@ const Account: NextPage = () => {
     UserItemsByUidQuery,
     UserItemsByUidQueryVariables
   >(USER_ITEMS_QUERY, { variables: { uid } });
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   if (!uid)
     return (
@@ -211,7 +463,10 @@ const Account: NextPage = () => {
               ]);
             }}
           />
-          <ItemDetail items={data?.users[0]?.user_items ?? []} />
+          <ItemDetail
+            items={data?.users[0]?.user_items ?? []}
+            modal={{ isOpen, onOpen, onClose }}
+          />
         </Stack>
       </WithLoading>
     </WithHeaderFooter>
