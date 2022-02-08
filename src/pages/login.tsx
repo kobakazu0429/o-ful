@@ -11,6 +11,7 @@ import {
   getRedirectResult,
   getAdditionalUserInfo,
 } from "firebase/auth";
+import { configureScope } from "@sentry/nextjs";
 import { gql, useMutation } from "@apollo/client";
 import {
   Heading,
@@ -98,10 +99,6 @@ const Login: NextPage = () => {
           email: string;
         };
 
-        if (error) {
-          throw error;
-        }
-
         await insertNewUser({
           variables: {
             uid,
@@ -109,6 +106,14 @@ const Login: NextPage = () => {
             twitter_id: screen_name,
             email,
           },
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        configureScope((scope) => {
+          scope.setUser({ uid });
         });
 
         // ID トークンを NextAuth に渡す
