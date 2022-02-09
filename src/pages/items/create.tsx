@@ -123,7 +123,7 @@ const Create: NextPage = () => {
         toast({
           title: "アップロードに成功しました。",
           description:
-            "登録されているメールに通知が来ます。適宜確認してください。",
+            "詳しく話を聞きたいユーザーからはTwitterのDMへ連絡がきます。DMを受け入れる設定にしておいてください。",
           status: "success",
           duration: 9000,
           isClosable: true,
