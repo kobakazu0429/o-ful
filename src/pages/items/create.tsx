@@ -110,7 +110,7 @@ const Create: NextPage = () => {
           body: formData,
         });
 
-        if (res.ok) {
+        if (!res.ok) {
           throw new Error(
             `status: ${res.status}, statusText: ${res.statusText}, url: ${res.url}`
           );
