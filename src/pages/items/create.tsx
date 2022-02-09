@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
+import imageCompression from "browser-image-compression";
 import {
   Heading,
   Text,
@@ -23,7 +25,6 @@ import { WithLoading } from "../../components/Loading";
 import { useSession } from "next-auth/react";
 import { RegisterItem } from "../../components/RegisterItem";
 import type { Inputs } from "../../components/RegisterItem";
-import { useRouter } from "next/router";
 
 const USER_ID_BY_UID = gql`
   query UserIdByUid($uid: String!) {
@@ -90,46 +91,73 @@ const Create: NextPage = () => {
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async (data) => {
-      setUploadStart(true);
-      const formData = new FormData();
-      Array.from(data.images).forEach((file, i) => {
-        formData.append(`inputFile${i}`, file);
-      });
-      const uploadedFiles: Array<{ secure_url: string }> = await fetch(
-        "/api/uploadImage",
-        {
+      try {
+        setUploadStart(true);
+        const formData = new FormData();
+        const compressedFiles = await Promise.all(
+          Array.from(data.images).map((file) => {
+            return imageCompression(file, {
+              maxSizeMB: 1,
+              useWebWorker: true,
+            });
+          })
+        );
+        compressedFiles.forEach((file, i) => {
+          formData.append(`inputFile${i}`, file);
+        });
+        const res = await fetch("/api/uploadImage", {
           method: "POST",
           body: formData,
+        });
+
+        if (res.ok) {
+          throw new Error(
+            `status: ${res.status}, statusText: ${res.statusText}, url: ${res.url}`
+          );
         }
-      ).then((res) => res.json());
 
-      const result = await insertItem({
-        variables: {
-          ...data,
-          state: 10,
-          item_images: {
-            data: uploadedFiles.map((i) => ({ url: i.secure_url })),
+        const uploadedFiles: Array<{ secure_url: string }> = await res.json();
+
+        const result = await insertItem({
+          variables: {
+            ...data,
+            state: 10,
+            item_images: {
+              data: uploadedFiles.map((i) => ({ url: i.secure_url })),
+            },
+            item_tags: {
+              data: data.tags?.map((t) => ({ tag_id: Number(t.value) })) ?? [],
+            },
+            user_id: userIdByUidQueryData!.users[0].id!,
           },
-          item_tags: {
-            data: data.tags?.map((t) => ({ tag_id: Number(t.value) })) ?? [],
-          },
-          user_id: userIdByUidQueryData!.users[0].id!,
-        },
-      });
+        });
 
-      console.log(result);
+        console.log(result);
 
-      if (result) {
+        if (result) {
+          toast({
+            title: "アップロードに成功しました。",
+            description:
+              "詳しく話を聞きたいユーザーからはTwitterのDMへ連絡がきます。DMを受け入れる設定にしておいてください。",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+            position: "top-right",
+          });
+          router.reload();
+        }
+      } catch (error) {
+        console.log("catch error:", error);
+
         toast({
-          title: "アップロードに成功しました。",
+          title: "問題が発生しました。",
           description:
-            "詳しく話を聞きたいユーザーからはTwitterのDMへ連絡がきます。DMを受け入れる設定にしておいてください。",
-          status: "success",
+            "時間をおいて再度試してください。改善されない場合は運営者までご報告ください。",
+          status: "error",
           duration: 9000,
           isClosable: true,
           position: "top-right",
         });
-        router.reload();
       }
     },
     [router, insertItem, userIdByUidQueryData, toast]
