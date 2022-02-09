@@ -128,7 +128,7 @@ const Item: NextPage = () => {
                   タグ
                 </Text>
 
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+                <SimpleGrid columns={1} spacing={10}>
                   <HStack spacing={4}>
                     {data?.items_by_pk?.item_tags.map(({ tag }) => {
                       return <Tag key={tag.id}>{tag.name}</Tag>;
