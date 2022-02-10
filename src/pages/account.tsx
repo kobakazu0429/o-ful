@@ -43,6 +43,7 @@ import type { Inputs } from "../components/RegisterItem";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { TIMESTAMPTZ_NOW } from "../db/hasuraSetVariable";
+import { cloudinaryUrlReplace } from "../lib/cloudinary";
 
 type InputsWithId = Omit<Inputs, "images"> & { id: number };
 
@@ -230,7 +231,9 @@ const CartItem: VFC<{
             width="120px"
             height="120px"
             fit="cover"
-            src={item_images[0].url}
+            src={cloudinaryUrlReplace(item_images[0].url, {
+              resize: { width: 120 },
+            })}
             alt={name}
             draggable="false"
             loading="lazy"
