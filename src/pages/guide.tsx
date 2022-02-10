@@ -1,7 +1,21 @@
-import type { VFC } from "react";
+import type { FC, VFC } from "react";
 import type { NextPage } from "next";
 import Image from "next/image";
-import { Box, Flex, Heading, Text, Center, VStack } from "@chakra-ui/react";
+import Link from "next/link";
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Button,
+  Center,
+  ListItem,
+  OrderedList,
+  VStack,
+  Divider,
+  Link as ChakraLink,
+} from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
 
 const Flow: VFC<{
@@ -80,6 +94,19 @@ const Flow: VFC<{
   );
 };
 
+const ProvidedService: FC<{ title: string }> = ({ children, title }) => {
+  return (
+    <Box my="60px" width="full" maxWidth="600px">
+      <Heading as="h2" mb="40px" fontSize="4xl" textAlign="center">
+        {title}
+      </Heading>
+      <VStack alignItems="start" width="full">
+        {children}
+      </VStack>
+    </Box>
+  );
+};
+
 const Guide: NextPage = () => {
   return (
     <WithHeaderFooter>
@@ -102,6 +129,7 @@ const Guide: NextPage = () => {
           direction={{ base: "column", md: "row" }}
           justifyContent="space-around"
           width="full"
+          mb="60px"
         >
           <Flow
             title="出品の流れ"
@@ -114,6 +142,101 @@ const Guide: NextPage = () => {
             flows={["欲しい商品を探す", "出品者に連絡する", "商品を受け取る"]}
           />
         </Flex>
+
+        <Divider />
+
+        <ProvidedService title="出品者との連絡">
+          <Text>o-fulではチャットサービスの提供をしていません。</Text>
+          <Text>出品者との連絡にはTwitter DMを利用してください。</Text>
+          <Text>出品者はDMの解放をする必要があります。</Text>
+
+          <ChakraLink
+            href="https://help.twitter.com/ja/using-twitter/direct-messages#receive"
+            isExternal
+          >
+            すべてのアカウントからダイレクトメッセージを受信するには |
+            Twitterヘルプ
+            <ExternalLinkIcon mb="0.1rem" mx="2px" />
+          </ChakraLink>
+        </ProvidedService>
+
+        <ProvidedService title="商品の受け渡し">
+          <Text>o-fulでは郵送サービスの提供をしていません。</Text>
+          <Text>
+            o-fulではトラブル防止のため手渡しでの受け渡しを推奨しています。
+          </Text>
+          <Text>
+            購入者・出品者の両者が納得すればゆうパックなどの郵送サービスを利用しても構いません。
+          </Text>
+          <ChakraLink
+            href="https://www.post.japanpost.jp/service/you_pack/"
+            isExternal
+          >
+            ゆうパック | 日本郵便株式会社
+            <ExternalLinkIcon mb="0.1rem" mx="2px" />
+          </ChakraLink>
+        </ProvidedService>
+
+        <ProvidedService title="決済">
+          <Text>o-fulでは決済サーボスの提供をしていません。</Text>
+          <Text>
+            o-fulではトラブル防止のため、商品を受け取った際に現金で支払うことを推奨しています。
+          </Text>
+          <Text>
+            購入者・出品者の両者が納得すればQRコード決済などの決済サービスを利用しても構いません。
+          </Text>
+        </ProvidedService>
+
+        <Divider />
+
+        <Box my="60px" width="full" maxWidth="600px">
+          <Heading as="h2" mb="40px" fontSize="4xl" textAlign="center">
+            なにを連絡するの？
+          </Heading>
+          <VStack alignItems="start" width="full">
+            <OrderedList>
+              <ListItem>学年、学科、名前を名乗りましょう。</ListItem>
+              <ListItem>
+                検討している商品について送りましょう。URLがあってもいいかもしれません。
+              </ListItem>
+              <ListItem>
+                表示されている価格は参考価格です。必要であれば金額について相談しましょう。
+              </ListItem>
+              <ListItem>
+                受け渡し方法と支払い方法を相談しましょう（o-fulでは手渡しでの受け渡し、支払いはその場で行うことを推奨しています。）
+              </ListItem>
+              <ListItem>
+                出品者は商品に汚れや書き込みなどがあればきちんと報告しましょう。購入者は気になるようであれば質問しましょう。必要であれば現物の確認をさせてもらいましょう。
+              </ListItem>
+              <ListItem>
+                購入者・出品者はそれぞれ納得がいかなければ理由を説明し、取引を中止しましょう。
+              </ListItem>
+              <ListItem>
+                相手は、同じ学校の先輩後輩です。仲良く気持ちよく取引しましょう。
+              </ListItem>
+            </OrderedList>
+          </VStack>
+        </Box>
+
+        <Box textAlign="center">
+          <Link href="/" passHref>
+            <Button
+              borderColor="yellow.300"
+              borderWidth="2px"
+              borderRadius="24px"
+              bgColor="yello.400"
+              _hover={{
+                bgColor: "yello.400",
+              }}
+              variant="outline"
+              as={"a"}
+              size="lg"
+              width="300px"
+            >
+              早速商品を探す
+            </Button>
+          </Link>
+        </Box>
       </Center>
     </WithHeaderFooter>
   );
