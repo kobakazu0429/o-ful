@@ -34,8 +34,7 @@
     "react-hook-form": "7.26.1",
     "react-responsive-carousel": "3.2.22",
     "react-social-login-buttons": "3.6.0",
-    "react-spring": "9.4.2",
-    "recoil": "0.6.1"
+    "react-spring": "9.4.2"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.6.0",

@@ -2,7 +2,6 @@ import "../styles/globals.css";
 import type { FC } from "react";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
-import { RecoilRoot } from "recoil";
 import { ApolloProvider } from "@apollo/client";
 import {
   ChakraProvider,
@@ -35,15 +34,13 @@ const MyApolloProvider: FC = ({ children }) => {
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <RecoilRoot>
-      <SessionProvider session={session}>
-        <MyApolloProvider>
-          <ChakraProvider theme={theme}>
-            <Component {...pageProps} />
-          </ChakraProvider>
-        </MyApolloProvider>
-      </SessionProvider>
-    </RecoilRoot>
+    <SessionProvider session={session}>
+      <MyApolloProvider>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </MyApolloProvider>
+    </SessionProvider>
   );
 }
 
