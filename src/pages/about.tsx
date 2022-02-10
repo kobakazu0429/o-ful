@@ -92,7 +92,7 @@ const Guide: NextPage = () => {
           </Persona>
 
           <Box textAlign="center">
-            <Link href="guide" passHref>
+            <Link href="/guide" passHref>
               <Button
                 borderColor="yellow.300"
                 borderWidth="2px"
