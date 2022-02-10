@@ -18,6 +18,7 @@ import {
   SimpleGrid,
   StackDivider,
   Tag,
+  Image,
   HStack,
   List,
   ListItem,
@@ -27,6 +28,7 @@ import { convertState } from "../../db/itemState";
 import { WithLoading } from "../../components/Loading";
 import { useRouter } from "next/router";
 import { formatPrice } from "../../utils/price";
+import { cloudinaryUrlReplace } from "../../lib/cloudinary";
 
 export const ITEM_QUERY = gql`
   query ItemDetail($id: Int!) {
@@ -84,7 +86,13 @@ const Item: NextPage = () => {
               {data?.items_by_pk?.item_images.map(({ id, url }) => {
                 return (
                   <div key={id}>
-                    <img src={url} alt="" />
+                    <Image
+                      src={cloudinaryUrlReplace(url, {
+                        resize: { width: 500 },
+                      })}
+                      alt={data?.items_by_pk?.name}
+                      loading="lazy"
+                    />
                   </div>
                 );
               })}

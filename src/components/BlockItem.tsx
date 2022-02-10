@@ -8,6 +8,7 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import { formatPrice } from "../utils/price";
+import { cloudinaryUrlReplace } from "../lib/cloudinary";
 
 interface Props {
   coverImageUrl: string;
@@ -36,10 +37,13 @@ export const BlockItem: VFC<Props> = ({ coverImageUrl, name, price }) => {
         <Box>
           <AspectRatio ratio={1}>
             <Image
-              src={coverImageUrl}
+              src={cloudinaryUrlReplace(coverImageUrl, {
+                resize: { width: 220 },
+              })}
               alt={`Picture of ${name}`}
               roundedTop="lg"
               fit="cover"
+              loading="lazy"
             />
           </AspectRatio>
         </Box>

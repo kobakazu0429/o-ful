@@ -10,7 +10,7 @@ const withBundleAnalyzer =
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["tfansite.jp"],
+    domains: [],
   },
 };
 
