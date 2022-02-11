@@ -38,26 +38,29 @@ const MyApolloProvider: FC = ({ children }) => {
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
-  const analytics = getAnalytics(firebaseApp);
 
-  const logUrl = useCallback(
-    (url: string) => {
-      logEvent(analytics, "page_view", { page_location: url });
-    },
-    [analytics]
-  );
+  const logUrl = useCallback((url: string) => {
+    console.log(url);
+
+    const analytics = getAnalytics(firebaseApp);
+    console.log(analytics);
+
+    logEvent(analytics, "page_view", { page_location: url });
+  }, []);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "production") {
-      router.events.on("routeChangeComplete", logUrl);
+    // if (
+    // process.env.NODE_ENV === "production"
+    // ) {
+    router.events.on("routeChangeComplete", logUrl);
 
-      //For First Page
-      logUrl(window.location.href);
+    //For First Page
+    logUrl(window.location.pathname);
 
-      return () => {
-        router.events.off("routeChangeComplete", logUrl);
-      };
-    }
+    return () => {
+      router.events.off("routeChangeComplete", logUrl);
+    };
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
