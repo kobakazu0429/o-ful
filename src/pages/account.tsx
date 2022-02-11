@@ -180,7 +180,7 @@ const ItemDetail: VFC<{
         </Heading>
         <Box bg="white" borderWidth="1px" rounded="lg">
           <Box mx="auto" p="6">
-            <Stack spacing={8}>
+            <Stack spacing={16}>
               {items.map(
                 ({ item }) =>
                   item && (
@@ -225,7 +225,13 @@ const CartItem: VFC<{
         align={{ base: "left-start", lg: "center" }}
         width="full"
       >
-        <Stack direction="row" spacing="5" overflow={"hidden"} width="full">
+        <Stack
+          direction="row"
+          spacing="5"
+          overflow={"hidden"}
+          width="full"
+          alignItems="center"
+        >
           <Image
             rounded="lg"
             width="120px"
@@ -238,7 +244,7 @@ const CartItem: VFC<{
             draggable="false"
             loading="lazy"
           />
-          <Box pt="4" flex="1" isTruncated width="full">
+          <Box flex="1" isTruncated width="full">
             <Stack spacing="0.5">
               <Text fontWeight="medium" noOfLines={1}>
                 {name}
