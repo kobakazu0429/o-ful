@@ -1,6 +1,9 @@
 import "../styles/globals.css";
+import { useCallback, useEffect } from "react";
 import type { FC } from "react";
 import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
+import { getAnalytics, logEvent } from "firebase/analytics";
 import { SessionProvider } from "next-auth/react";
 import { ApolloProvider } from "@apollo/client";
 import {
@@ -9,6 +12,7 @@ import {
   theme as chakraTheme,
 } from "@chakra-ui/react";
 import { useApollo } from "../lib/apolloClient";
+import { firebaseApp } from "../lib/firebase";
 
 const theme = extendTheme({
   styles: {
@@ -33,6 +37,30 @@ const MyApolloProvider: FC = ({ children }) => {
 };
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  const router = useRouter();
+  const analytics = getAnalytics(firebaseApp);
+
+  const logUrl = useCallback(
+    (url: string) => {
+      logEvent(analytics, "page_view", { page_location: url });
+    },
+    [analytics]
+  );
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") {
+      router.events.on("routeChangeComplete", logUrl);
+
+      //For First Page
+      logUrl(window.location.href);
+
+      return () => {
+        router.events.off("routeChangeComplete", logUrl);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <SessionProvider session={session}>
       <MyApolloProvider>
