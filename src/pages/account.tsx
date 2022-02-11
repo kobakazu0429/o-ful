@@ -258,7 +258,7 @@ const CartItem: VFC<{
 
               <Text>{convertState(state)}</Text>
               <Flex width="full" justifyContent="flex-end">
-                <ButtonGroup>
+                <Flex flexDirection={{ base: "column-reverse", md: "row" }}>
                   <Button colorScheme="red" width="150px" onClick={onOpen}>
                     削除する
                   </Button>
@@ -280,7 +280,7 @@ const CartItem: VFC<{
                   >
                     編集する
                   </Button>
-                </ButtonGroup>
+                </Flex>
               </Flex>
             </Stack>
           </Box>
