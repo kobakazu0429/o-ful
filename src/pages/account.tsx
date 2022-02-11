@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import Link from "next/link";
 import { useSession, signOut, SessionContextValue } from "next-auth/react";
 import { getAuth } from "firebase/auth";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
@@ -185,7 +186,6 @@ const ItemDetail: VFC<{
                 ({ item }) =>
                   item && (
                     <CartItem
-                      key={item.id}
                       item={item}
                       openEditModal={modal.onOpen}
                       setEditItem={setEditItem}
@@ -232,37 +232,45 @@ const CartItem: VFC<{
           width="full"
           alignItems="center"
         >
-          <Image
-            rounded="lg"
-            width="120px"
-            height="120px"
-            fit="cover"
-            src={cloudinaryUrlReplace(item_images[0].url, {
-              resize: { width: 120 },
-            })}
-            alt={name}
-            draggable="false"
-            loading="lazy"
-          />
+          <Link href={`/items/${id}`} passHref>
+            <a>
+              <Image
+                rounded="lg"
+                width="120px"
+                height="120px"
+                fit="cover"
+                src={cloudinaryUrlReplace(item_images[0].url, {
+                  resize: { width: 240 },
+                })}
+                alt={name}
+                draggable="false"
+                loading="lazy"
+              />
+            </a>
+          </Link>
           <Box flex="1" isTruncated width="full">
             <Stack spacing="0.5">
-              <Text fontWeight="medium" noOfLines={1}>
-                {name}
-              </Text>
+              {" "}
+              <Link href={`/items/${id}`} passHref>
+                <a>
+                  <Text fontWeight="medium" noOfLines={1}>
+                    {name}
+                  </Text>
 
-              <Box>
-                <Text color={"gray.600"} fontSize="sm" noOfLines={1}>
-                  {description}
-                </Text>
-              </Box>
+                  <Box>
+                    <Text color={"gray.600"} fontSize="sm" noOfLines={1}>
+                      {description}
+                    </Text>
+                  </Box>
 
-              <HStack spacing="1">
-                <Text as="span" color="gray.700">
-                  {formatPrice(price)}
-                </Text>
-              </HStack>
-
-              <Text>{convertState(state)}</Text>
+                  <HStack spacing="1">
+                    <Text as="span" color="gray.700">
+                      {formatPrice(price)}
+                    </Text>
+                  </HStack>
+                  <Text>{convertState(state)}</Text>
+                </a>
+              </Link>
               <Flex width="full" justifyContent="flex-end">
                 <Flex flexDirection={{ base: "column-reverse", md: "row" }}>
                   <Button
