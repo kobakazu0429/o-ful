@@ -50,7 +50,7 @@ export const BlockItem: VFC<Props> = ({ coverImageUrl, name, price }) => {
 
         <Box pt="3" px="3">
           <Heading
-            fontSize="2xl"
+            fontSize={{ base: "xs", md: "2xl" }}
             fontWeight="semibold"
             as="h4"
             lineHeight="tight"
