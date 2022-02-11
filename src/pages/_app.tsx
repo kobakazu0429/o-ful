@@ -56,6 +56,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
     //For First Page
     logUrl(window.location.pathname);
+    getAnalytics(firebaseApp).app.automaticDataCollectionEnabled = true;
 
     return () => {
       router.events.off("routeChangeComplete", logUrl);
