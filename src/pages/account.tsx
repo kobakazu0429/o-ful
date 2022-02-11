@@ -259,13 +259,19 @@ const CartItem: VFC<{
               <Text>{convertState(state)}</Text>
               <Flex width="full" justifyContent="flex-end">
                 <Flex flexDirection={{ base: "column-reverse", md: "row" }}>
-                  <Button colorScheme="red" width="150px" onClick={onOpen}>
+                  <Button
+                    colorScheme="red"
+                    width="150px"
+                    onClick={onOpen}
+                    marginRight={{ base: "0px", md: "16px" }}
+                  >
                     削除する
                   </Button>
                   <Button
                     colorScheme="blue"
                     variant="outline"
                     width="150px"
+                    marginBottom={{ base: "16px", md: "0px" }}
                     onClick={() => {
                       setEditItem({
                         id,
