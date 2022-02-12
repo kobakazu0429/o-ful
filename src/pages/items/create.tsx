@@ -191,7 +191,11 @@ const Create: NextPage = () => {
   }, [insertItemMutationError, uploadStart]);
 
   if (!isLogin || !userIdByUidQueryData?.users[0].id) {
-    return <WithHeaderFooter>出品は許可されていません</WithHeaderFooter>;
+    return (
+      <WithHeaderFooter>
+        こちらのページはログインしなければ使えません。
+      </WithHeaderFooter>
+    );
   }
 
   return (

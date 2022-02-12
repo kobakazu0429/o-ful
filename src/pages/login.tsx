@@ -68,12 +68,13 @@ const Login: NextPage = () => {
     InsertNewUserMutationVariables
   >(INSERT_NEW_USER);
 
-  const auth = getAuth();
   const twitterProvider = new TwitterAuthProvider();
 
   const handleOAuthLogin = (provider: AuthProvider) => {
     router.replace({ hash: REDIRECTED_HASH }, undefined, { shallow: true });
-    signInWithRedirect(auth, provider).catch((error) => console.error(error));
+    signInWithRedirect(getAuth(), provider).catch((error) =>
+      console.error(error)
+    );
   };
 
   useEffect(() => {
@@ -81,7 +82,7 @@ const Login: NextPage = () => {
 
     try {
       (async () => {
-        const credential = await getRedirectResult(auth);
+        const credential = await getRedirectResult(getAuth());
         if (!credential) throw new Error("credential is not exist");
         const uid = credential.user.uid;
 

@@ -1,6 +1,13 @@
+import { useEffect, useRef } from "react";
+
 import { getApps, initializeApp } from "firebase/app";
 import type { FirebaseOptions } from "firebase/app";
+
+import type { Auth } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+
 import { getAnalytics } from "firebase/analytics";
+import type { Analytics } from "firebase/analytics";
 
 export const createFirebaseApp = () => {
   const firebaseConfig: FirebaseOptions = {
@@ -26,4 +33,24 @@ export const createFirebaseApp = () => {
     }
     return app;
   }
+};
+
+export const useFirebaseAuth = () => {
+  const auth = useRef<Auth>();
+
+  useEffect(() => {
+    auth.current = getAuth();
+  }, []);
+
+  return auth;
+};
+
+export const useFirebaseAnalytics = () => {
+  const analytics = useRef<Analytics>();
+
+  useEffect(() => {
+    analytics.current = getAnalytics();
+  }, []);
+
+  return analytics;
 };

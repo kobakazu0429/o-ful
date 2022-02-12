@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useSession, signOut, SessionContextValue } from "next-auth/react";
-import { getAuth } from "firebase/auth";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
 import {
   Box,
@@ -23,7 +22,7 @@ import {
   ModalBody,
   useToast,
 } from "@chakra-ui/react";
-import { useCallback, useState, VFC } from "react";
+import { useCallback, useMemo, useState, VFC } from "react";
 import type { DeepNonNullable } from "utility-types";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
@@ -44,6 +43,7 @@ import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { TIMESTAMPTZ_NOW } from "../db/hasuraSetVariable";
 import { cloudinaryUrlReplace } from "../lib/cloudinary";
+import { useFirebaseAuth } from "../lib/firebase";
 
 type InputsWithId = Omit<Inputs, "images"> & { id: number };
 
@@ -540,8 +540,12 @@ const EditItemModal: VFC<{
 
 const Account: NextPage = () => {
   const session = useSession();
-  const auth = getAuth();
-  const uid = auth.currentUser?.uid ?? session.data?.user?.uid ?? "";
+  const auth = useFirebaseAuth();
+
+  const uid = useMemo(() => {
+    return auth.current?.currentUser?.uid ?? session.data?.user?.uid ?? "";
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth]);
 
   const { data, error, loading } = useQuery<
     UserItemsByUidQuery,
@@ -577,7 +581,7 @@ const Account: NextPage = () => {
             logout={async () => {
               await Promise.all([
                 signOut({ callbackUrl: "/" }),
-                auth.signOut(),
+                auth?.current?.signOut(),
               ]);
             }}
           />
