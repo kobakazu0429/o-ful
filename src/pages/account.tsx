@@ -23,7 +23,7 @@ import {
   ModalBody,
   useToast,
 } from "@chakra-ui/react";
-import { useCallback, useMemo, useState, VFC } from "react";
+import { useCallback, useEffect, useMemo, useState, VFC } from "react";
 import type { DeepNonNullable } from "utility-types";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
@@ -388,8 +388,14 @@ const EditItemModal: VFC<{
     handleSubmit,
     register,
     setValue,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<Inputs>({ mode: "onChange", criteriaMode: "all" });
+
+  useEffect(() => {
+    reset(item);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item]);
 
   const [updateItem, { error: updateItemMutationError }] = useMutation<
     UpdateItemMutation,
