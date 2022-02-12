@@ -12,7 +12,7 @@ import {
   theme as chakraTheme,
 } from "@chakra-ui/react";
 import { useApollo } from "../lib/apolloClient";
-import { firebaseApp } from "../lib/firebase";
+import { createFirebaseApp } from "../lib/firebase";
 
 const theme = extendTheme({
   styles: {
@@ -39,29 +39,23 @@ const MyApolloProvider: FC = ({ children }) => {
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
 
-  const logUrl = useCallback((url: string) => {
-    console.log(url);
-
-    const analytics = getAnalytics(firebaseApp);
-    console.log(analytics);
-
-    logEvent(analytics, "page_view", { page_location: url });
+  const logUrl = useCallback((path: string) => {
+    logEvent(getAnalytics(), "page_view", { page_path: path });
   }, []);
 
   useEffect(() => {
-    // if (
-    // process.env.NODE_ENV === "production"
-    // ) {
-    router.events.on("routeChangeComplete", logUrl);
+    if (process.env.NODE_ENV === "production") {
+      createFirebaseApp();
 
-    //For First Page
-    logUrl(window.location.pathname);
-    getAnalytics(firebaseApp).app.automaticDataCollectionEnabled = true;
+      router.events.on("routeChangeComplete", logUrl);
 
-    return () => {
-      router.events.off("routeChangeComplete", logUrl);
-    };
-    // }
+      //For First Page
+      logUrl(window.location.pathname);
+
+      return () => {
+        router.events.off("routeChangeComplete", logUrl);
+      };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

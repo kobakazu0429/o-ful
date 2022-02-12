@@ -23,7 +23,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import type { AuthProvider } from "firebase/auth";
-import { firebaseApp } from "../lib/firebase";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
 import { Spinner } from "../components/Spinner";
 import {
@@ -69,7 +68,7 @@ const Login: NextPage = () => {
     InsertNewUserMutationVariables
   >(INSERT_NEW_USER);
 
-  const auth = getAuth(firebaseApp);
+  const auth = getAuth();
   const twitterProvider = new TwitterAuthProvider();
 
   const handleOAuthLogin = (provider: AuthProvider) => {

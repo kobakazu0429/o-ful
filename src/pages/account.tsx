@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useSession, signOut, SessionContextValue } from "next-auth/react";
 import { getAuth } from "firebase/auth";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
-import { firebaseApp } from "../lib/firebase";
 import {
   Box,
   Text,
@@ -541,7 +540,7 @@ const EditItemModal: VFC<{
 
 const Account: NextPage = () => {
   const session = useSession();
-  const auth = getAuth(firebaseApp);
+  const auth = getAuth();
   const uid = auth.currentUser?.uid ?? session.data?.user?.uid ?? "";
 
   const { data, error, loading } = useQuery<
