@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import NextHeadSeo from "next-head-seo";
 import { useQuery, gql } from "@apollo/client";
 import type {
   ItemDetailQuery,
@@ -29,6 +30,7 @@ import { WithLoading } from "../../components/Loading";
 import { useRouter } from "next/router";
 import { formatPrice } from "../../utils/price";
 import { cloudinaryUrlReplace } from "../../lib/cloudinary";
+import { canonicalUrl } from "../../utils/canonicalUrl";
 
 export const ITEM_QUERY = gql`
   query ItemDetail($id: Int!) {
@@ -69,135 +71,142 @@ const Item: NextPage = () => {
   });
 
   return (
-    <WithHeaderFooter>
-      <WithLoading loading={loading} error={error}>
-        <SimpleGrid
-          columns={{ base: 1, md: 2 }}
-          spacing={{ base: 8, md: 10 }}
-          py={{ base: 18, md: 24 }}
-        >
-          <Box w="full" maxWidth={{ nase: "100%", md: "500px" }}>
-            <Carousel
-              showStatus={false}
-              showIndicators={false}
-              infiniteLoop={true}
-              useKeyboardArrows={true}
-            >
-              {data?.items_by_pk?.item_images.map(({ id, url }) => {
-                return (
-                  <div key={id}>
-                    <Image
-                      src={cloudinaryUrlReplace(url, {
-                        resize: { width: 500 },
-                      })}
-                      alt={data?.items_by_pk?.name}
-                      loading="lazy"
-                    />
-                  </div>
-                );
-              })}
-            </Carousel>
-          </Box>
-
-          <Stack spacing={{ base: 6, md: 10 }} w={{ base: "100%" }}>
-            <Box>
-              <Heading
-                lineHeight={1.1}
-                fontWeight={600}
-                fontSize={{ base: "2xl", sm: "4xl", lg: "5xl" }}
-                width={"full"}
+    <>
+      <NextHeadSeo
+        title="商品詳細"
+        description="o-fulの商品詳細"
+        canonical={canonicalUrl(`/items/${id}`)}
+      />
+      <WithHeaderFooter>
+        <WithLoading loading={loading} error={error}>
+          <SimpleGrid
+            columns={{ base: 1, md: 2 }}
+            spacing={{ base: 8, md: 10 }}
+            py={{ base: 18, md: 24 }}
+          >
+            <Box w="full" maxWidth={{ nase: "100%", md: "500px" }}>
+              <Carousel
+                showStatus={false}
+                showIndicators={false}
+                infiniteLoop={true}
+                useKeyboardArrows={true}
               >
-                {data?.items_by_pk?.name}
-              </Heading>
-              <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-                出品者: {data?.items_by_pk?.user_item?.user.nickname} (@
-                {data?.items_by_pk?.user_item?.user.twitter_id}) さん
-              </Text>
-              <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
-                参考価格: {formatPrice(data?.items_by_pk?.price)}
-              </Text>
+                {data?.items_by_pk?.item_images.map(({ id, url }) => {
+                  return (
+                    <div key={id}>
+                      <Image
+                        src={cloudinaryUrlReplace(url, {
+                          resize: { width: 500 },
+                        })}
+                        alt={data?.items_by_pk?.name}
+                        loading="lazy"
+                      />
+                    </div>
+                  );
+                })}
+              </Carousel>
             </Box>
 
-            <Stack
-              spacing={{ base: 4, sm: 6 }}
-              direction={"column"}
-              divider={<StackDivider borderColor={"gray.200"} />}
-            >
-              <VStack spacing={{ base: 4, sm: 6 }} align="left">
-                <Text fontSize={"lg"}>{data?.items_by_pk?.description}</Text>
-              </VStack>
+            <Stack spacing={{ base: 6, md: 10 }} w={{ base: "100%" }}>
               <Box>
-                <Text
-                  fontSize={{ base: "16px", lg: "18px" }}
-                  color={"yellow.500"}
-                  fontWeight={"500"}
-                  mb={"4"}
+                <Heading
+                  lineHeight={1.1}
+                  fontWeight={600}
+                  fontSize={{ base: "2xl", sm: "4xl", lg: "5xl" }}
+                  width={"full"}
                 >
-                  タグ
+                  {data?.items_by_pk?.name}
+                </Heading>
+                <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
+                  出品者: {data?.items_by_pk?.user_item?.user.nickname} (@
+                  {data?.items_by_pk?.user_item?.user.twitter_id}) さん
                 </Text>
-
-                <SimpleGrid columns={1} spacing={10}>
-                  <HStack spacing={4}>
-                    {data?.items_by_pk?.item_tags.map(({ tag }) => {
-                      return <Tag key={tag.id}>{tag.name}</Tag>;
-                    })}
-                  </HStack>
-                </SimpleGrid>
-              </Box>
-              <Box>
-                <Text
-                  fontSize={{ base: "16px", lg: "18px" }}
-                  color={"yellow.500"}
-                  fontWeight={"500"}
-                  textTransform={"uppercase"}
-                  mb={"4"}
-                >
-                  詳細
+                <Text color={"gray.900"} fontWeight={300} fontSize={"2xl"}>
+                  参考価格: {formatPrice(data?.items_by_pk?.price)}
                 </Text>
-
-                <List spacing={2}>
-                  <ListItem>
-                    <Text as={"span"} fontWeight={"bold"}>
-                      状況:
-                    </Text>{" "}
-                    {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
-                    {convertState(data?.items_by_pk?.state!)}
-                  </ListItem>
-                  <ListItem>
-                    <Text as={"span"} fontWeight={"bold"}>
-                      コンディション:
-                    </Text>{" "}
-                    {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
-                    {convertCondition(data?.items_by_pk?.condition!).label}
-                  </ListItem>
-                </List>
               </Box>
+
+              <Stack
+                spacing={{ base: 4, sm: 6 }}
+                direction={"column"}
+                divider={<StackDivider borderColor={"gray.200"} />}
+              >
+                <VStack spacing={{ base: 4, sm: 6 }} align="left">
+                  <Text fontSize={"lg"}>{data?.items_by_pk?.description}</Text>
+                </VStack>
+                <Box>
+                  <Text
+                    fontSize={{ base: "16px", lg: "18px" }}
+                    color={"yellow.500"}
+                    fontWeight={"500"}
+                    mb={"4"}
+                  >
+                    タグ
+                  </Text>
+
+                  <SimpleGrid columns={1} spacing={10}>
+                    <HStack spacing={4}>
+                      {data?.items_by_pk?.item_tags.map(({ tag }) => {
+                        return <Tag key={tag.id}>{tag.name}</Tag>;
+                      })}
+                    </HStack>
+                  </SimpleGrid>
+                </Box>
+                <Box>
+                  <Text
+                    fontSize={{ base: "16px", lg: "18px" }}
+                    color={"yellow.500"}
+                    fontWeight={"500"}
+                    textTransform={"uppercase"}
+                    mb={"4"}
+                  >
+                    詳細
+                  </Text>
+
+                  <List spacing={2}>
+                    <ListItem>
+                      <Text as={"span"} fontWeight={"bold"}>
+                        状況:
+                      </Text>{" "}
+                      {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
+                      {convertState(data?.items_by_pk?.state!)}
+                    </ListItem>
+                    <ListItem>
+                      <Text as={"span"} fontWeight={"bold"}>
+                        コンディション:
+                      </Text>{" "}
+                      {/* eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain */}
+                      {convertCondition(data?.items_by_pk?.condition!).label}
+                    </ListItem>
+                  </List>
+                </Box>
+              </Stack>
+
+              <Button
+                rounded={"none"}
+                w={"full"}
+                mt={8}
+                size={"lg"}
+                py={"7"}
+                bg={"gray.900"}
+                color={"white"}
+                textTransform={"uppercase"}
+                _hover={{
+                  transform: "translateY(2px)",
+                  boxShadow: "lg",
+                }}
+                as="a"
+                href={`https://twitter.com/${data?.items_by_pk?.user_item?.user.twitter_id}`}
+                rel="noreferrer noopener"
+                target="_blank"
+              >
+                出品者と詳しく話す
+              </Button>
             </Stack>
-
-            <Button
-              rounded={"none"}
-              w={"full"}
-              mt={8}
-              size={"lg"}
-              py={"7"}
-              bg={"gray.900"}
-              color={"white"}
-              textTransform={"uppercase"}
-              _hover={{
-                transform: "translateY(2px)",
-                boxShadow: "lg",
-              }}
-              as="a"
-              href={`https://twitter.com/${data?.items_by_pk?.user_item?.user.twitter_id}`}
-              rel="noreferrer noopener"
-              target="_blank"
-            >
-              出品者と詳しく話す
-            </Button>
-          </Stack>
-        </SimpleGrid>
-      </WithLoading>
-    </WithHeaderFooter>
+          </SimpleGrid>
+        </WithLoading>
+      </WithHeaderFooter>
+    </>
   );
 };
 

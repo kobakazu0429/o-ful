@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Link from "next/link";
+import NextHeadSeo from "next-head-seo";
 import { useSession, signOut, SessionContextValue } from "next-auth/react";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
 import {
@@ -44,6 +45,7 @@ import type { SubmitHandler } from "react-hook-form";
 import { TIMESTAMPTZ_NOW } from "../db/hasuraSetVariable";
 import { cloudinaryUrlReplace } from "../lib/cloudinary";
 import { useFirebaseAuth } from "../lib/firebase";
+import { canonicalUrl } from "../utils/canonicalUrl";
 
 type InputsWithId = Omit<Inputs, "images"> & { id: number };
 
@@ -556,42 +558,57 @@ const Account: NextPage = () => {
 
   if (!uid)
     return (
-      <WithHeaderFooter>
-        <Text>こちらのページはログインしなければ使えません。</Text>
-      </WithHeaderFooter>
+      <>
+        <NextHeadSeo
+          title="アカウント"
+          description="o-fulのアカウントページ"
+          canonical={canonicalUrl("/account")}
+        />
+        <WithHeaderFooter>
+          <Text>こちらのページはログインしなければ使えません。</Text>
+        </WithHeaderFooter>
+      </>
     );
 
   return (
-    <WithHeaderFooter>
-      <WithLoading
-        loading={loading || session?.status === "loading"}
-        error={
-          error ||
-          (session?.status !== "loading" && session?.status !== "authenticated")
-        }
-      >
-        <Stack
-          direction={{ base: "column", xl: "row" }}
-          spacing={{ base: 10 }}
-          justifyContent={"center"}
+    <>
+      <NextHeadSeo
+        title="アカウント"
+        description="o-fulのアカウントページ"
+        canonical={canonicalUrl("/account")}
+      />
+      <WithHeaderFooter>
+        <WithLoading
+          loading={loading || session?.status === "loading"}
+          error={
+            error ||
+            (session?.status !== "loading" &&
+              session?.status !== "authenticated")
+          }
         >
-          <UserDetail
-            // @ts-expect-error
-            user={session.data.user}
-            logout={async () => {
-              await Promise.all([
-                signOut({ callbackUrl: "/" }),
-                auth?.current?.signOut(),
-              ]);
-            }}
-          />
-          <ItemDetail
-            items={data?.users[0]?.user_items ?? []}
-            modal={{ isOpen, onOpen, onClose }}
-          />
-        </Stack>
-      </WithLoading>
-    </WithHeaderFooter>
+          <Stack
+            direction={{ base: "column", xl: "row" }}
+            spacing={{ base: 10 }}
+            justifyContent={"center"}
+          >
+            <UserDetail
+              // @ts-expect-error
+              user={session.data.user}
+              logout={async () => {
+                await Promise.all([
+                  signOut({ callbackUrl: "/" }),
+                  auth?.current?.signOut(),
+                ]);
+              }}
+            />
+            <ItemDetail
+              items={data?.users[0]?.user_items ?? []}
+              modal={{ isOpen, onOpen, onClose }}
+            />
+          </Stack>
+        </WithLoading>
+      </WithHeaderFooter>
+    </>
   );
 };
 

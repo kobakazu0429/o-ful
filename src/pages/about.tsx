@@ -2,6 +2,7 @@ import type { FC } from "react";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import NextHeadSeo from "next-head-seo";
 import {
   Box,
   Stack,
@@ -12,6 +13,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { WithHeaderFooter } from "../layouts/WithHeaderFooter";
+import { canonicalUrl } from "../utils/canonicalUrl";
 
 const Persona: FC<{ reverse?: boolean; src: string; title: string }> = ({
   reverse = false,
@@ -57,62 +59,69 @@ const Persona: FC<{ reverse?: boolean; src: string; title: string }> = ({
 
 const Guide: NextPage = () => {
   return (
-    <WithHeaderFooter>
-      <Center flexDirection="column">
-        <Heading as="h1" mb="32px" fontSize="4xl" textAlign="center">
-          o-fulってなに？
-        </Heading>
+    <>
+      <NextHeadSeo
+        title="o-fulってなに？"
+        description="o-fulは教科書や参考書など自分にとって必要なくなったものとそれを欲しい人を繋げるマッチングサービスです。"
+        canonical={canonicalUrl("/about")}
+      />
+      <WithHeaderFooter>
+        <Center flexDirection="column">
+          <Heading as="h1" mb="32px" fontSize="4xl" textAlign="center">
+            o-fulってなに？
+          </Heading>
 
-        <Heading
-          textAlign="center"
-          mb="150px"
-          fontSize={{ base: "xl", md: "2xl" }}
-        >
-          <Text as="h2">
-            教科書や参考書など自分にとって必要なくなったものと
-          </Text>
+          <Heading
+            textAlign="center"
+            mb="150px"
+            fontSize={{ base: "xl", md: "2xl" }}
+          >
+            <Text as="h2">
+              教科書や参考書など自分にとって必要なくなったものと
+            </Text>
 
-          <Text as="h2">それを欲しい人を繋げるマッチングサービスです</Text>
-        </Heading>
+            <Text as="h2">それを欲しい人を繋げるマッチングサービスです</Text>
+          </Heading>
 
-        <Stack spacing={"64px"} maxWidth="1000px">
-          <Persona src="/images/y1156.png" title="売りたい">
-            <Text>卒業するから、進学するから</Text>
-            <Text>でも要らない教科書を捨てるのはもったいない！</Text>
-          </Persona>
+          <Stack spacing={"64px"} maxWidth="1000px">
+            <Persona src="/images/y1156.png" title="売りたい">
+              <Text>卒業するから、進学するから</Text>
+              <Text>でも要らない教科書を捨てるのはもったいない！</Text>
+            </Persona>
 
-          <Persona src="/images/y0734.png" title="あげたい" reverse>
-            <Text>自分は次のステップへ</Text>
-            <Text>押入れに眠るくらいなら後輩に役立てて欲しい！</Text>
-          </Persona>
+            <Persona src="/images/y0734.png" title="あげたい" reverse>
+              <Text>自分は次のステップへ</Text>
+              <Text>押入れに眠るくらいなら後輩に役立てて欲しい！</Text>
+            </Persona>
 
-          <Persona src="/images/y1039.png" title="欲しい">
-            <Text>専門の教科書って高いんだよなぁ</Text>
-            <Text>毎年たくさん買うのは大変だし、誰か譲ってくれないかな</Text>
-          </Persona>
+            <Persona src="/images/y1039.png" title="欲しい">
+              <Text>専門の教科書って高いんだよなぁ</Text>
+              <Text>毎年たくさん買うのは大変だし、誰か譲ってくれないかな</Text>
+            </Persona>
 
-          <Box textAlign="center">
-            <Link href="/guide" passHref>
-              <Button
-                borderColor="yellow.300"
-                borderWidth="2px"
-                borderRadius="24px"
-                bgColor="yello.400"
-                _hover={{
-                  bgColor: "yello.400",
-                }}
-                variant="outline"
-                as={"a"}
-                size="lg"
-                width="300px"
-              >
-                詳しい使い方を見る
-              </Button>
-            </Link>
-          </Box>
-        </Stack>
-      </Center>
-    </WithHeaderFooter>
+            <Box textAlign="center">
+              <Link href="/guide" passHref>
+                <Button
+                  borderColor="yellow.300"
+                  borderWidth="2px"
+                  borderRadius="24px"
+                  bgColor="yello.400"
+                  _hover={{
+                    bgColor: "yello.400",
+                  }}
+                  variant="outline"
+                  as={"a"}
+                  size="lg"
+                  width="300px"
+                >
+                  詳しい使い方を見る
+                </Button>
+              </Link>
+            </Box>
+          </Stack>
+        </Center>
+      </WithHeaderFooter>
+    </>
   );
 };
 

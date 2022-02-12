@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import NextHeadSeo from "next-head-seo";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import imageCompression from "browser-image-compression";
@@ -25,6 +26,7 @@ import { WithLoading } from "../../components/Loading";
 import { useSession } from "next-auth/react";
 import { RegisterItem } from "../../components/RegisterItem";
 import type { Inputs } from "../../components/RegisterItem";
+import { canonicalUrl } from "../../utils/canonicalUrl";
 
 const USER_ID_BY_UID = gql`
   query UserIdByUid($uid: String!) {
@@ -192,48 +194,61 @@ const Create: NextPage = () => {
 
   if (!isLogin || !userIdByUidQueryData?.users[0].id) {
     return (
-      <WithHeaderFooter>
-        こちらのページはログインしなければ使えません。
-      </WithHeaderFooter>
+      <>
+        <NextHeadSeo
+          title="出品登録フォーム"
+          description="o-fulの出品登録フォーム"
+          canonical={canonicalUrl("/items/create")}
+        />
+        <WithHeaderFooter>
+          こちらのページはログインしなければ使えません。
+        </WithHeaderFooter>
+      </>
     );
   }
 
   return (
-    <WithHeaderFooter>
-      <WithLoading
-        loading={userIdByUidQueryLoading}
-        error={userIdByUidQueryError}
-      >
-        <Flex align={"center"} justify={"center"}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack
-              spacing={8}
-              mx={"auto"}
-              maxW={"lg"}
-              py={12}
-              px={6}
-              align={"center"}
-              textAlign={"center"}
-            >
-              <Heading fontSize={"4xl"}>
-                <Text as="h1" display="inline-block">
-                  出品登録フォーム
-                </Text>
-              </Heading>
-              <RegisterItem register={register} setValue={setValue} />
+    <>
+      <NextHeadSeo
+        title="出品登録フォーム"
+        description="o-fulの出品登録フォーム"
+        canonical={canonicalUrl("/items/create")}
+      />
+      <WithHeaderFooter>
+        <WithLoading
+          loading={userIdByUidQueryLoading}
+          error={userIdByUidQueryError}
+        >
+          <Flex align={"center"} justify={"center"}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack
+                spacing={8}
+                mx={"auto"}
+                maxW={"lg"}
+                py={12}
+                px={6}
+                align={"center"}
+                textAlign={"center"}
+              >
+                <Heading fontSize={"4xl"}>
+                  <Text as="h1" display="inline-block">
+                    出品登録フォーム
+                  </Text>
+                </Heading>
+                <RegisterItem register={register} setValue={setValue} />
 
-              <ButtonGroup spacing={6} mt={6}>
-                <Button
-                  bg={"red.400"}
-                  color={"white"}
-                  w="full"
-                  _hover={{
-                    bg: "red.500",
-                  }}
-                >
-                  キャンセル
-                </Button>
-                {/* <Button
+                <ButtonGroup spacing={6} mt={6}>
+                  <Button
+                    bg={"red.400"}
+                    color={"white"}
+                    w="full"
+                    _hover={{
+                      bg: "red.500",
+                    }}
+                  >
+                    キャンセル
+                  </Button>
+                  {/* <Button
               bg={"green.400"}
               color={"white"}
               w="full"
@@ -243,32 +258,33 @@ const Create: NextPage = () => {
               >
               下書き保存
             </Button> */}
-                <Button
-                  bg={"blue.400"}
-                  color={"white"}
-                  w="full"
-                  _hover={{
-                    bg: "blue.500",
-                  }}
-                  type="submit"
-                  disabled={Object.keys(errors).length !== 0 || isSubmitting}
-                >
-                  出品する
-                </Button>
-              </ButtonGroup>
-              {errors && (
-                <ul className="text-left mt-12">
-                  {Object.entries(errors).map(([k, v]) => {
-                    // @ts-expect-error
-                    return v.message && <li key={k}>{v.message}</li>;
-                  })}
-                </ul>
-              )}
-            </Stack>
-          </form>
-        </Flex>
-      </WithLoading>
-    </WithHeaderFooter>
+                  <Button
+                    bg={"blue.400"}
+                    color={"white"}
+                    w="full"
+                    _hover={{
+                      bg: "blue.500",
+                    }}
+                    type="submit"
+                    disabled={Object.keys(errors).length !== 0 || isSubmitting}
+                  >
+                    出品する
+                  </Button>
+                </ButtonGroup>
+                {errors && (
+                  <ul className="text-left mt-12">
+                    {Object.entries(errors).map(([k, v]) => {
+                      // @ts-expect-error
+                      return v.message && <li key={k}>{v.message}</li>;
+                    })}
+                  </ul>
+                )}
+              </Stack>
+            </form>
+          </Flex>
+        </WithLoading>
+      </WithHeaderFooter>
+    </>
   );
 };
 

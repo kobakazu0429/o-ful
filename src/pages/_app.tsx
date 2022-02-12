@@ -3,6 +3,7 @@ import { useCallback, useEffect } from "react";
 import type { FC } from "react";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
+import NextHeadSeo from "next-head-seo";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { SessionProvider } from "next-auth/react";
 import { ApolloProvider } from "@apollo/client";
@@ -13,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useApollo } from "../lib/apolloClient";
 import { createFirebaseApp } from "../lib/firebase";
+import { canonicalUrl } from "../utils/canonicalUrl";
 
 const theme = extendTheme({
   styles: {
@@ -44,18 +46,17 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   }, []);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "production") {
-      createFirebaseApp();
+    createFirebaseApp();
 
-      router.events.on("routeChangeComplete", logUrl);
+    router.events.on("routeChangeComplete", logUrl);
 
-      //For First Page
-      logUrl(window.location.pathname);
+    //For First Page
+    logUrl(window.location.pathname);
 
-      return () => {
-        router.events.off("routeChangeComplete", logUrl);
-      };
-    }
+    return () => {
+      router.events.off("routeChangeComplete", logUrl);
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -63,7 +64,14 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     <SessionProvider session={session}>
       <MyApolloProvider>
         <ChakraProvider theme={theme}>
-          <Component {...pageProps} />
+          <>
+            <NextHeadSeo
+              title="o-ful"
+              description=""
+              canonical={canonicalUrl("/")}
+            />
+            <Component {...pageProps} />
+          </>
         </ChakraProvider>
       </MyApolloProvider>
     </SessionProvider>

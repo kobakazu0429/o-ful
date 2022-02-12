@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import NextHeadSeo from "next-head-seo";
 import { signIn } from "next-auth/react";
 import { TwitterLoginButton } from "react-social-login-buttons";
 import {
@@ -29,6 +30,7 @@ import {
   InsertNewUserMutation,
   InsertNewUserMutationVariables,
 } from "../generated/graphql";
+import { canonicalUrl } from "../utils/canonicalUrl";
 
 const REDIRECTED_HASH = "redirected";
 
@@ -139,6 +141,43 @@ const Login: NextPage = () => {
 
   if (isRedirected) {
     return (
+      <>
+        <NextHeadSeo
+          title="会員登録・ログイン"
+          description="o-fulの会員登録・ログイン"
+          canonical={canonicalUrl("/login")}
+        />
+        <WithHeaderFooter>
+          <Flex align={"center"} justify={"center"}>
+            <Stack
+              spacing={8}
+              mx={"auto"}
+              maxW={"lg"}
+              py={12}
+              px={6}
+              align={"center"}
+              textAlign={"center"}
+            >
+              <Box>
+                <Heading as="h1" display="inline-block" fontSize={"4xl"}>
+                  ログイン中です
+                </Heading>
+              </Box>
+              <Spinner />
+            </Stack>
+          </Flex>
+        </WithHeaderFooter>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <NextHeadSeo
+        title="会員登録・ログイン"
+        description="o-fulの会員登録・ログイン"
+        canonical={canonicalUrl("/login")}
+      />
       <WithHeaderFooter>
         <Flex align={"center"} justify={"center"}>
           <Stack
@@ -152,70 +191,49 @@ const Login: NextPage = () => {
           >
             <Box>
               <Heading as="h1" display="inline-block" fontSize={"4xl"}>
-                ログイン中です
+                会員登録
+              </Heading>
+              <Heading as="h1" display="inline-block" fontSize={"4xl"}>
+                &nbsp;/&nbsp;
+              </Heading>
+              <Heading as="h1" display="inline-block" fontSize={"4xl"}>
+                ログイン
               </Heading>
             </Box>
-            <Spinner />
+
+            <Text color={"gray.600"}>
+              現在、Twitterでのログインのみに対応しています。
+            </Text>
+            <Text color={"gray.600"} paddingBottom="32px">
+              シークレットモードではご利用できません。
+            </Text>
+
+            <TwitterLoginButton
+              align="center"
+              onClick={() => handleOAuthLogin(twitterProvider)}
+            />
+
+            <Text color={"gray.600"} fontSize={"sm"}>
+              <Text as="span" display="inline-block">
+                登録またはログインすることで、
+              </Text>
+              <Text as="span" display="inline-block">
+                <Link href="/teams" passHref>
+                  <ChakraLink color="blue.600">[利用規約]</ChakraLink>
+                </Link>
+                と
+                <Link href="/privacy" passHref>
+                  <ChakraLink color="blue.600">
+                    [プライバシーポリシー]
+                  </ChakraLink>
+                </Link>
+                に同意したものとみなされます。
+              </Text>
+            </Text>
           </Stack>
         </Flex>
       </WithHeaderFooter>
-    );
-  }
-
-  return (
-    <WithHeaderFooter>
-      <Flex align={"center"} justify={"center"}>
-        <Stack
-          spacing={8}
-          mx={"auto"}
-          maxW={"lg"}
-          py={12}
-          px={6}
-          align={"center"}
-          textAlign={"center"}
-        >
-          <Box>
-            <Heading as="h1" display="inline-block" fontSize={"4xl"}>
-              会員登録
-            </Heading>
-            <Heading as="h1" display="inline-block" fontSize={"4xl"}>
-              &nbsp;/&nbsp;
-            </Heading>
-            <Heading as="h1" display="inline-block" fontSize={"4xl"}>
-              ログイン
-            </Heading>
-          </Box>
-
-          <Text color={"gray.600"}>
-            現在、Twitterでのログインのみに対応しています。
-          </Text>
-          <Text color={"gray.600"} paddingBottom="32px">
-            シークレットモードではご利用できません。
-          </Text>
-
-          <TwitterLoginButton
-            align="center"
-            onClick={() => handleOAuthLogin(twitterProvider)}
-          />
-
-          <Text color={"gray.600"} fontSize={"sm"}>
-            <Text as="span" display="inline-block">
-              登録またはログインすることで、
-            </Text>
-            <Text as="span" display="inline-block">
-              <Link href="/teams" passHref>
-                <ChakraLink color="blue.600">[利用規約]</ChakraLink>
-              </Link>
-              と
-              <Link href="/privacy" passHref>
-                <ChakraLink color="blue.600">[プライバシーポリシー]</ChakraLink>
-              </Link>
-              に同意したものとみなされます。
-            </Text>
-          </Text>
-        </Stack>
-      </Flex>
-    </WithHeaderFooter>
+    </>
   );
 };
 
