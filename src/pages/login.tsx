@@ -6,7 +6,6 @@ import NextHeadSeo from "next-head-seo";
 import { signIn } from "next-auth/react";
 import { TwitterLoginButton } from "react-social-login-buttons";
 import {
-  getAuth,
   signInWithRedirect,
   TwitterAuthProvider,
   getRedirectResult,
@@ -31,6 +30,7 @@ import {
   InsertNewUserMutationVariables,
 } from "../generated/graphql";
 import { canonicalUrl } from "../utils/canonicalUrl";
+import { useFirebaseAuth } from "../lib/firebase";
 
 const REDIRECTED_HASH = "redirected";
 
@@ -61,6 +61,7 @@ const INSERT_NEW_USER = gql`
 const Login: NextPage = () => {
   const toast = useToast();
   const router = useRouter();
+  const auth = useFirebaseAuth();
   const isRedirected = useMemo(() => {
     return router.asPath.split("#")[1] === REDIRECTED_HASH;
   }, [router]);
@@ -73,18 +74,22 @@ const Login: NextPage = () => {
   const twitterProvider = new TwitterAuthProvider();
 
   const handleOAuthLogin = (provider: AuthProvider) => {
+    if (!auth.current) return;
+
     router.replace({ hash: REDIRECTED_HASH }, undefined, { shallow: true });
-    signInWithRedirect(getAuth(), provider).catch((error) =>
-      console.error(error)
-    );
+    signInWithRedirect(auth.current, provider).catch((error) => {
+      console.error(error);
+      throw error;
+    });
   };
 
   useEffect(() => {
     if (!isRedirected) return;
+    if (!auth.current) return;
 
     try {
       (async () => {
-        const credential = await getRedirectResult(getAuth());
+        const credential = await getRedirectResult(auth.current!);
         if (!credential) throw new Error("credential is not exist");
         const uid = credential.user.uid;
 

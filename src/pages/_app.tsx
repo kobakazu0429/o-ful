@@ -13,7 +13,7 @@ import {
   theme as chakraTheme,
 } from "@chakra-ui/react";
 import { useApollo } from "../lib/apolloClient";
-import { createFirebaseApp } from "../lib/firebase";
+import { firebaseApp } from "../lib/firebase";
 import { canonicalUrl } from "../utils/canonicalUrl";
 
 const theme = extendTheme({
@@ -46,8 +46,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   }, []);
 
   useEffect(() => {
-    createFirebaseApp();
+    console.log(firebaseApp);
+  }, []);
 
+  useEffect(() => {
     router.events.on("routeChangeComplete", logUrl);
 
     //For First Page
@@ -56,7 +58,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     return () => {
       router.events.off("routeChangeComplete", logUrl);
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
