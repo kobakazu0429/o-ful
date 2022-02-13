@@ -1,5 +1,6 @@
 import { useMemo, VFC } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Box, Flex, Text, Button, Stack } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 
@@ -22,15 +23,14 @@ export const Header: VFC = () => {
       >
         <Flex flex={{ base: 1 }} justify={{ base: "left", md: "start" }}>
           <Link href="/" passHref>
-            <Text
-              as="a"
-              textAlign={{ base: "center", md: "left" }}
-              fontFamily={"heading"}
-              color={"gray.800"}
-              variant="link"
-            >
-              o-ful
-            </Text>
+            <a style={{ lineHeight: 0 }}>
+              <Image
+                src="/o-ful.svg"
+                alt="o-ful logo"
+                height={44}
+                width={(44 / 56) * 145}
+              />
+            </a>
           </Link>
         </Flex>
 
