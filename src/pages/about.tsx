@@ -60,11 +60,7 @@ const Persona: FC<{ reverse?: boolean; src: string; title: string }> = ({
 const Guide: NextPage = () => {
   return (
     <>
-      <NextHeadSeo
-        title="o-fulってなに？"
-        description="o-fulは教科書や参考書など自分にとって必要なくなったものとそれを欲しい人を繋げるマッチングサービスです。"
-        canonical={canonicalUrl("/about")}
-      />
+      <NextHeadSeo title="o-fulってなに？" canonical={canonicalUrl("/about")} />
       <WithHeaderFooter>
         <Center flexDirection="column">
           <Heading as="h1" mb="32px" fontSize="4xl" textAlign="center">

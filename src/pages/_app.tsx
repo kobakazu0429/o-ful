@@ -68,8 +68,18 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           <>
             <NextHeadSeo
               title="o-ful"
-              description=""
+              description="教科書や問題集など自分にとって必要なくなったものとそれを欲しい人を繋げるマッチングサービス"
               canonical={canonicalUrl("/")}
+              twitter={{ card: "summary_large_image", site: "@kobakazu0429" }}
+              og={{
+                title: "o-ful",
+                description:
+                  "教科書や問題集など自分にとって必要なくなったものとそれを欲しい人を繋げるマッチングサービス",
+                url: canonicalUrl("/"),
+                image: "https://o-ful.vercel.app/ogp.png",
+                siteName: "o-ful",
+                type: "website",
+              }}
             />
             <Component {...pageProps} />
           </>
