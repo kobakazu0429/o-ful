@@ -13,10 +13,11 @@ import { canonicalUrl } from "../utils/canonicalUrl";
 
 const ITEMS_QUERY = gql`
   query RecentItems {
-    items(where: { state: { _eq: 10 } }, order_by: { updated_at: desc }) {
+    items(where: { state: { _in: [10, 20] } }, order_by: { created_at: desc }) {
       id
       name
       price
+      state
       item_images {
         url
       }
@@ -67,6 +68,7 @@ const Home: NextPage = () => {
                     }
                     name={item.name}
                     price={item.price}
+                    state={item.state}
                   />
                 </a>
               </Link>

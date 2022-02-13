@@ -14,9 +14,15 @@ interface Props {
   coverImageUrl: string;
   name: string;
   price: number;
+  state: number;
 }
 
-export const BlockItem: VFC<Props> = ({ coverImageUrl, name, price }) => {
+export const BlockItem: VFC<Props> = ({
+  coverImageUrl,
+  name,
+  price,
+  state,
+}) => {
   return (
     <WrapItem
       w={{
@@ -36,15 +42,30 @@ export const BlockItem: VFC<Props> = ({ coverImageUrl, name, price }) => {
       >
         <Box>
           <AspectRatio ratio={1}>
-            <Image
-              src={cloudinaryUrlReplace(coverImageUrl, {
-                resize: { width: 220 },
-              })}
-              alt={`Picture of ${name}`}
-              roundedTop="lg"
-              fit="cover"
-              loading="lazy"
-            />
+            <>
+              <Image
+                src={cloudinaryUrlReplace(coverImageUrl, {
+                  resize: { width: 220 },
+                })}
+                alt={`Picture of ${name}`}
+                roundedTop="lg"
+                fit="cover"
+                loading="lazy"
+              />
+              {state === 20 ? (
+                <Box backgroundColor="blackAlpha.600">
+                  <Text
+                    color="white"
+                    fontSize={"xl"}
+                    fontWeight="bold"
+                    backgroundColor={"red.500"}
+                    padding={2}
+                  >
+                    売り切れ
+                  </Text>
+                </Box>
+              ) : null}
+            </>
           </AspectRatio>
         </Box>
 
