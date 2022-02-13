@@ -140,13 +140,15 @@ const Create: NextPage = () => {
           toast({
             title: "アップロードに成功しました。",
             description:
-              "詳しく話を聞きたいユーザーからはTwitterのDMへ連絡がきます。DMを受け入れる設定にしておいてください。",
+              "詳しく話を聞きたいユーザーからはTwitterのDMへ連絡がきます。DMを受け入れる設定にしておいてください。3秒後に入力フォームは自動でリセットされます。",
             status: "success",
             duration: 9000,
             isClosable: true,
             position: "top-right",
           });
-          router.reload();
+          setTimeout(() => {
+            router.reload();
+          }, 3000);
         }
       } catch (error) {
         console.log("catch error:", error);
