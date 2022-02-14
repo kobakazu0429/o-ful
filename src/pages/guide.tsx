@@ -160,15 +160,6 @@ const Guide: NextPage = () => {
             <Text>
               購入者は商品が有料である場合のみ出品者に支払い、それ以外では支払いは発生しません。
             </Text>
-
-            <ChakraLink
-              href="https://help.twitter.com/ja/using-twitter/direct-messages#receive"
-              isExternal
-            >
-              すべてのアカウントからダイレクトメッセージを受信するには |
-              Twitterヘルプ
-              <ExternalLinkIcon mb="0.1rem" mx="2px" />
-            </ChakraLink>
           </ProvidedService>
 
           <ProvidedService title="出品者との連絡">
