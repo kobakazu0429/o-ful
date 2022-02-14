@@ -204,7 +204,7 @@ const Guide: NextPage = () => {
           </ProvidedService>
 
           <ProvidedService title="決済">
-            <Text>o-fulでは決済サーボスの提供をしていません。</Text>
+            <Text>o-fulでは決済サービスの提供をしていません。</Text>
             <Text>
               o-fulではトラブル防止のため、商品を受け取った際に現金で支払うことを推奨しています。
             </Text>
