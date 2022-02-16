@@ -18,7 +18,7 @@
     "@chakra-ui/react": "1.8.3",
     "@emotion/react": "11.7.1",
     "@emotion/styled": "11.6.0",
-    "@sentry/nextjs": "6.17.8",
+    "@sentry/nextjs": "6.17.9",
     "browser-image-compression": "1.0.17",
     "chakra-ui-autocomplete": "1.4.5",
     "cloudinary": "1.28.1",
