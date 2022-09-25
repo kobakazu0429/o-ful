@@ -44,7 +44,7 @@
     "@graphql-codegen/typescript": "2.4.8",
     "@graphql-codegen/typescript-operations": "2.3.5",
     "@graphql-codegen/typescript-react-apollo": "3.2.11",
-    "@kobakazu0429/eslint-config-typescript-react": "3.1.0",
+    "@kobakazu0429/eslint-config-typescript-react": "3.1.2",
     "@next/bundle-analyzer": "12.1.4",
     "@types/formidable": "2.0.5",
     "@types/node": "17.0.14",
