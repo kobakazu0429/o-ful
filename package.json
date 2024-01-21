@@ -21,7 +21,7 @@
     "@sentry/nextjs": "6.18.2",
     "browser-image-compression": "1.0.17",
     "chakra-ui-autocomplete": "1.4.5",
-    "cloudinary": "1.28.1",
+    "cloudinary": "1.41.3",
     "firebase": "9.6.11",
     "firebase-admin": "10.0.2",
     "formidable": "2.0.1",
