@@ -13,7 +13,7 @@
     "generate": "graphql-codegen --config codegen.yml -r dotenv/config"
   },
   "dependencies": {
-    "@apollo/client": "3.5.10",
+    "@apollo/client": "3.9.9",
     "@chakra-ui/icons": "1.1.7",
     "@chakra-ui/react": "1.8.9",
     "@emotion/react": "11.8.2",
